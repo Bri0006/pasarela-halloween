@@ -6,6 +6,8 @@
     <title>🎃 Pasarela Halloween 2026 - Pijamada Especial</title>
     <!-- CDN de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- CDN de Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -386,68 +388,83 @@
     </div>
 
     <script>
-        // DATOS DE PRUEBA INICIALES
-        const participantesEjemplo = [
-            {
-                id: 'p1',
-                nombre: 'Tía Claudia',
-                personaje: 'Bruja de la Noche 🧙‍♀️',
-                fotos: [
-                    'https://images.unsplash.com/photo-1509557965875-b88c97052f0e?auto=format&fit=crop&w=800&q=80',
-                    'https://images.unsplash.com/photo-1512314889357-e157c22f938d?auto=format&fit=crop&w=800&q=80'
-                ],
-                video: null,
-                votos: { creativo: 4, terror: 2, actitud: 5 },
-                comentarios: ['¡El mejor sombrero!', '¡Asustó a los niños jaja!']
-            },
-            {
-                id: 'p2',
-                nombre: 'Mateo',
-                personaje: 'Calavera Zombie 💀',
-                fotos: [
-                    'https://images.unsplash.com/photo-1508361001413-7a9dca21d08a?auto=format&fit=crop&w=800&q=80'
-                ],
-                video: null,
-                votos: { creativo: 3, terror: 6, actitud: 3 },
-                comentarios: ['Increíble maquillaje mateito']
-            }
-        ];
+        // ================= CONFIGURACIÓN SUPABASE =================
+        const SUPABASE_URL = 'https://qttycfvwtdlhgdxwjbiq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_gqN4850qm5PcY95d2zbZMQ_SvHeGxTE';
+
+        let supabaseClient = null;
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch(e) {
+            console.error("Error al iniciar Supabase:", e);
+        }
 
         // ESTADO GLOBAL
         let participantes = [];
         let misVotos = JSON.parse(localStorage.getItem('misVotos_halloween2026')) || { creativo: null, terror: null, actitud: null };
-        let horarios = JSON.parse(localStorage.getItem('horarios_halloween2026')) || { limiteInscripcion: '', limiteVotacion: '' };
+        let horarios = { limiteInscripcion: '', limiteVotacion: '' };
         let tipoAccesoPendiente = '';
 
-        window.onload = function() {
+        window.onload = async function() {
             crearEfectoFlotante();
-            cargarDatos();
+            await cargarDatosSupabase();
+            configurarRealtime();
             verificarHorariosBanners();
         };
 
-        function cargarDatos() {
-            const guardados = localStorage.getItem('participantes_halloween2026');
-            if (guardados) {
-                try {
-                    participantes = JSON.parse(guardados);
-                } catch(e) {
-                    participantes = participantesEjemplo;
+        // CARGAR DATOS DESDE SUPABASE
+        async function cargarDatosSupabase() {
+            if (!supabaseClient) return;
+            try {
+                const { data: partData, error: partError } = await supabaseClient.from('participantes').select('*');
+                if (!partError && partData) {
+                    participantes = partData.map(p => ({
+                        id: p.id,
+                        nombre: p.nombre,
+                        personaje: p.personaje,
+                        fotos: p.fotos || [],
+                        video: p.video || null,
+                        votos: {
+                            creativo: p.votos_creativo || 0,
+                            terror: p.votos_terror || 0,
+                            actitud: p.votos_actitud || 0
+                        },
+                        comentarios: p.comentarios || []
+                    }));
                 }
-            } else {
-                participantes = participantesEjemplo;
-                guardarEnStorage();
+
+                const { data: confData, error: confError } = await supabaseClient.from('configuracion').select('*');
+                if (!confError && confData) {
+                    confData.forEach(row => {
+                        if (row.key === 'limiteInscripcion') horarios.limiteInscripcion = row.value || '';
+                        if (row.key === 'limiteVotacion') horarios.limiteVotacion = row.value || '';
+                    });
+                }
+            } catch(err) {
+                console.error("Error cargando de Supabase:", err);
             }
         }
 
-        function guardarEnStorage() {
-            try {
-                localStorage.setItem('participantes_halloween2026', JSON.stringify(participantes));
-                return true;
-            } catch (err) {
-                console.error("Storage limit reached", err);
-                mostrarAviso("⚠️ La memoria del navegador está llena. Por favor avisa al admin para eliminar contenidos antiguos o subir un video más corto.");
-                return false;
-            }
+        // TIEMPO REAL (REALTIME) CON SUPABASE
+        function configurarRealtime() {
+            if (!supabaseClient) return;
+            
+            supabaseClient
+                .channel('cambios-pasarela')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'participantes' }, payload => {
+                    cargarDatosSupabase().then(() => {
+                        if (!document.getElementById('secJurado').classList.contains('hidden')) {
+                            renderizarGaleria();
+                        }
+                        if (!document.getElementById('secAdmin').classList.contains('hidden')) {
+                            actualizarAdminPanel();
+                        }
+                    });
+                })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracion' }, payload => {
+                    cargarDatosSupabase().then(() => verificarHorariosBanners());
+                })
+                .subscribe();
         }
 
         // GENERAR EMOJIS ANIMADOS DE FONDO
@@ -490,13 +507,14 @@
         }
 
         // CONTROL DE HORARIOS DE FIESTA
-        function guardarLimite(tipo) {
-            if (tipo === 'inscripcion') {
-                horarios.limiteInscripcion = document.getElementById('limiteInscripcion').value;
-            } else {
-                horarios.limiteVotacion = document.getElementById('limiteVotacion').value;
+        async function guardarLimite(tipo) {
+            const val = tipo === 'inscripcion' ? document.getElementById('limiteInscripcion').value : document.getElementById('limiteVotacion').value;
+            const keyName = tipo === 'inscripcion' ? 'limiteInscripcion' : 'limiteVotacion';
+
+            if (supabaseClient) {
+                await supabaseClient.from('configuracion').upsert({ key: keyName, value: val });
             }
-            localStorage.setItem('horarios_halloween2026', JSON.stringify(horarios));
+            horarios[keyName] = val;
             mostrarAviso('⏰ Configuración de horario guardada exitosamente.');
             verificarHorariosBanners();
         }
@@ -516,17 +534,17 @@
 
             if (horarios.limiteInscripcion) {
                 if (estaHoraVencida(horarios.limiteInscripcion)) {
-                    msjs.push('🔒 Inscripciones cerradas por hora límite (' + horarios.limiteInscripcion + ')');
+                    msjs.push('🔒 Inscripciones cerradas (' + horarios.limiteInscripcion + ')');
                 } else {
-                    msjs.push('⏳ Límite para subir disfraces: ' + horarios.limiteInscripcion);
+                    msjs.push('⏳ Límite subida: ' + horarios.limiteInscripcion);
                 }
             }
 
             if (horarios.limiteVotacion) {
                 if (estaHoraVencida(horarios.limiteVotacion)) {
-                    msjs.push('🛑 Votaciones cerradas por hora límite (' + horarios.limiteVotacion + ')');
+                    msjs.push('🛑 Votaciones cerradas (' + horarios.limiteVotacion + ')');
                 } else {
-                    msjs.push('⏳ Límite para votar: ' + horarios.limiteVotacion);
+                    msjs.push('⏳ Límite votos: ' + horarios.limiteVotacion);
                 }
             }
 
@@ -591,7 +609,6 @@
                 const card = document.createElement('div');
                 card.className = 'bg-spooky-card rounded-3xl p-5 space-y-5 shadow-2xl flex flex-col justify-between border-2 border-purple-500/60';
 
-                // Fotos HTML (Soporta múltiples fotos)
                 let fotosHtml = '';
                 if (p.fotos && p.fotos.length > 0) {
                     fotosHtml = `
@@ -607,7 +624,6 @@
                         </div>`;
                 }
 
-                // Video HTML
                 let videoHtml = '';
                 if (p.video) {
                     videoHtml = `
@@ -617,7 +633,6 @@
                         </div>`;
                 }
 
-                // Comentarios HTML
                 let comentariosHtml = (p.comentarios || []).map(c => `
                     <div class="bg-purple-950/80 p-2.5 rounded-xl border border-purple-800 text-sm text-purple-200">
                         💬 ${escapeHtml(c)}
@@ -685,8 +700,8 @@
             if (main) main.src = url;
         }
 
-        // EMITIR VOTOS
-        function votar(idParticipante, categoria) {
+        // EMITIR VOTOS EN SUPABASE
+        async function votar(idParticipante, categoria) {
             if (estaHoraVencida(horarios.limiteVotacion)) {
                 mostrarAviso('🛑 Las votaciones han sido cerradas.');
                 return;
@@ -697,42 +712,80 @@
                 return;
             }
 
+            const actual = participantes.find(p => p.id === idParticipante);
+            if (!actual) return;
+
+            let nuevoCreativo = actual.votos.creativo;
+            let nuevoTerror = actual.votos.terror;
+            let nuevoActitud = actual.votos.actitud;
+
             if (misVotos[categoria]) {
                 const anterior = participantes.find(p => p.id === misVotos[categoria]);
-                if (anterior && anterior.votos[categoria] > 0) {
-                    anterior.votos[categoria]--;
+                if (anterior) {
+                    let antCreativo = anterior.votos.creativo;
+                    let antTerror = anterior.votos.terror;
+                    let antActitud = anterior.votos.actitud;
+
+                    if (categoria === 'creativo' && antCreativo > 0) antCreativo--;
+                    if (categoria === 'terror' && antTerror > 0) antTerror--;
+                    if (categoria === 'actitud' && antActitud > 0) antActitud--;
+
+                    if (supabaseClient) {
+                        await supabaseClient.from('participantes').update({
+                            votos_creativo: antCreativo,
+                            votos_terror: antTerror,
+                            votos_actitud: antActitud
+                        }).eq('id', anterior.id);
+                    }
                 }
             }
 
-            const actual = participantes.find(p => p.id === idParticipante);
-            if (actual) {
-                actual.votos[categoria]++;
-                misVotos[categoria] = idParticipante;
+            if (categoria === 'creativo') nuevoCreativo++;
+            if (categoria === 'terror') nuevoTerror++;
+            if (categoria === 'actitud') nuevoActitud++;
 
-                localStorage.setItem('misVotos_halloween2026', JSON.stringify(misVotos));
-                guardarEnStorage();
-                renderizarGaleria();
-                mostrarAviso('🎉 ¡Tu voto ha sido registrado!');
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('participantes').update({
+                    votos_creativo: nuevoCreativo,
+                    votos_terror: nuevoTerror,
+                    votos_actitud: nuevoActitud
+                }).eq('id', idParticipante);
+
+                if (!error) {
+                    misVotos[categoria] = idParticipante;
+                    localStorage.setItem('misVotos_halloween2026', JSON.stringify(misVotos));
+                    await cargarDatosSupabase();
+                    renderizarGaleria();
+                    mostrarAviso('🎉 ¡Tu voto ha sido registrado!');
+                }
             }
         }
 
-        // AGREGAR COMENTARIO
-        function agregarComentario(id) {
+        // AGREGAR COMENTARIO EN SUPABASE
+        async function agregarComentario(id) {
             const input = document.getElementById(`com_${id}`);
             const texto = input.value.trim();
             if (!texto) return;
 
             const p = participantes.find(x => x.id === id);
             if (p) {
-                if (!p.comentarios) p.comentarios = [];
-                p.comentarios.push(texto);
-                guardarEnStorage();
-                renderizarGaleria();
-                mostrarAviso('💬 ¡Comentario agregado!');
+                const nuevosComentarios = [...(p.comentarios || []), texto];
+                if (supabaseClient) {
+                    const { error } = await supabaseClient.from('participantes').update({
+                        comentarios: nuevosComentarios
+                    }).eq('id', id);
+
+                    if (!error) {
+                        input.value = '';
+                        await cargarDatosSupabase();
+                        renderizarGaleria();
+                        mostrarAviso('💬 ¡Comentario agregado!');
+                    }
+                }
             }
         }
 
-        // OPTIMIZACIÓN DE IMAGEN CON CANVAS PARA NO SATURAR EL CELULAR
+        // COMPRESIÓN DE IMAGEN CON CANVAS
         function comprimirImagen(file, maxWidth = 800, quality = 0.7) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -753,8 +806,7 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
 
-                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-                        resolve(dataUrl);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
                     };
                     img.onerror = err => reject(err);
                     img.src = e.target.result;
@@ -764,21 +816,21 @@
             });
         }
 
-        // LECTURA DIRECTA DE VIDEO CON LÍMITE DE TAMAÑO MÓVIL
+        // LECTURA DE VIDEO LIGERA
         function leerVideoMobile(file, maxMB = 12) {
             return new Promise((resolve, reject) => {
                 if (file.size > maxMB * 1024 * 1024) {
-                    reject(`El video es muy pesado (${(file.size / (1024 * 1024)).toFixed(1)} MB). Para celulares el máximo es ${maxMB} MB. Reenvíalo por WhatsApp para comprimirlo en 2 segundos o recórtalo un poco.`);
+                    reject(`El video es muy pesado (${(file.size / (1024 * 1024)).toFixed(1)} MB). Máximo ${maxMB} MB para celulares. Reenvíalo por WhatsApp para comprimirlo.`);
                     return;
                 }
                 const reader = new FileReader();
                 reader.onload = e => resolve(e.target.result);
-                reader.onerror = err => reject("Error al leer el video en el celular.");
+                reader.onerror = err => reject("Error al leer el video.");
                 reader.readAsDataURL(file);
             });
         }
 
-        // GUARDAR NUEVO PARTICIPANTE
+        // GUARDAR NUEVO PARTICIPANTE EN SUPABASE
         async function guardarParticipante(e) {
             e.preventDefault();
 
@@ -789,7 +841,7 @@
 
             const btnSubmit = document.getElementById('btnSubirSubmit');
             btnSubmit.disabled = true;
-            btnSubmit.innerText = '⏳ OPTIMIZANDO Y SUBIENDO...';
+            btnSubmit.innerText = '⏳ SUBIENDO A LA NUBE...';
 
             const nombre = document.getElementById('pNombre').value.trim();
             const personaje = document.getElementById('pPersonaje').value.trim();
@@ -811,54 +863,49 @@
             }
 
             try {
-                // Compresión ultra ligera de imágenes
                 const fotosBase64 = [];
                 for (let i = 0; i < fotosInput.length; i++) {
                     const b64 = await comprimirImagen(fotosInput[i]);
                     fotosBase64.push(b64);
                 }
 
-                // Carga optimizada de video
                 let videoBase64 = null;
                 if (videoInput) {
                     videoBase64 = await leerVideoMobile(videoInput);
                 }
 
-                const nuevo = {
-                    id: 'p_' + Date.now(),
+                const nuevoId = 'p_' + Date.now();
+                const nuevoRegistro = {
+                    id: nuevoId,
                     nombre: nombre,
                     personaje: personaje,
                     fotos: fotosBase64,
                     video: videoBase64,
-                    votos: { creativo: 0, terror: 0, actitud: 0 },
+                    votos_creativo: 0,
+                    votos_terror: 0,
+                    votos_actitud: 0,
                     comentarios: []
                 };
 
-                participantes.push(nuevo);
-                
-                const exito = guardarEnStorage();
-
-                if (!exito) {
-                    participantes.pop();
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerText = '🚀 PUBLICAR EN LA PASARELA';
-                    return;
+                if (supabaseClient) {
+                    const { error } = await supabaseClient.from('participantes').insert([nuevoRegistro]);
+                    if (error) throw error;
                 }
 
                 document.getElementById('formParticipante').reset();
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = '🚀 PUBLICAR EN LA PASARELA';
 
-                mostrarAviso('🎃 ¡Participante agregado con éxito!');
+                mostrarAviso('🎃 ¡Participante agregado con éxito a Supabase!');
+                await cargarDatosSupabase();
 
-                // Redirigir y re-renderizar
                 setTimeout(() => {
                     entrarJuradoDirecto();
                 }, 1200);
 
             } catch (err) {
                 console.error(err);
-                mostrarAviso(typeof err === 'string' ? err : '❌ Ocurrió un inconveniente al procesar el archivo en el teléfono.');
+                mostrarAviso(typeof err === 'string' ? err : '❌ Error al subir a la base de datos.');
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = '🚀 PUBLICAR EN LA PASARELA';
             }
@@ -952,60 +999,70 @@
             });
         }
 
-        function borrarParticipanteCompleto(id) {
+        async function borrarParticipanteCompleto(id) {
             if (confirm('¿Eliminar a este participante completamente?')) {
-                participantes = participantes.filter(p => p.id !== id);
-                Object.keys(misVotos).forEach(cat => {
-                    if (misVotos[cat] === id) misVotos[cat] = null;
-                });
-                localStorage.setItem('misVotos_halloween2026', JSON.stringify(misVotos));
-                guardarEnStorage();
-                actualizarAdminPanel();
-                mostrarAviso('🗑️ Participante eliminado.');
+                if (supabaseClient) {
+                    await supabaseClient.from('participantes').delete().eq('id', id);
+                    await cargarDatosSupabase();
+                    actualizarAdminPanel();
+                    mostrarAviso('🗑️ Participante eliminado.');
+                }
             }
         }
 
-        function borrarFotoIndividual(pId, index) {
+        async function borrarFotoIndividual(pId, index) {
             const p = participantes.find(x => x.id === pId);
             if (p && p.fotos) {
                 p.fotos.splice(index, 1);
-                guardarEnStorage();
-                actualizarAdminPanel();
-                mostrarAviso('📷 Foto borrada.');
+                if (supabaseClient) {
+                    await supabaseClient.from('participantes').update({ fotos: p.fotos }).eq('id', pId);
+                    await cargarDatosSupabase();
+                    actualizarAdminPanel();
+                    mostrarAviso('📷 Foto borrada.');
+                }
             }
         }
 
-        function borrarVideoIndividual(pId) {
+        async function borrarVideoIndividual(pId) {
             const p = participantes.find(x => x.id === pId);
             if (p) {
                 p.video = null;
-                guardarEnStorage();
-                actualizarAdminPanel();
-                mostrarAviso('🎥 Video borrado.');
+                if (supabaseClient) {
+                    await supabaseClient.from('participantes').update({ video: null }).eq('id', pId);
+                    await cargarDatosSupabase();
+                    actualizarAdminPanel();
+                    mostrarAviso('🎥 Video borrado.');
+                }
             }
         }
 
-        function reiniciarVotos() {
+        async function reiniciarVotos() {
             if (confirm('¿Reiniciar todos los votos a 0?')) {
-                participantes.forEach(p => {
-                    p.votos = { creativo: 0, terror: 0, actitud: 0 };
-                });
-                misVotos = { creativo: null, terror: null, actitud: null };
-                localStorage.removeItem('misVotos_halloween2026');
-                guardarEnStorage();
-                actualizarAdminPanel();
-                mostrarAviso('🔄 Todos los votos han vuelto a 0.');
+                if (supabaseClient) {
+                    for (let p of participantes) {
+                        await supabaseClient.from('participantes').update({ votos_creativo: 0, votos_terror: 0, votos_actitud: 0 }).eq('id', p.id);
+                    }
+                    localStorage.removeItem('misVotos_halloween2026');
+                    misVotos = { creativo: null, terror: null, actitud: null };
+                    await cargarDatosSupabase();
+                    actualizarAdminPanel();
+                    mostrarAviso('🔄 Todos los votos han vuelto a 0.');
+                }
             }
         }
 
-        function reiniciarTodo() {
-            if (confirm('⚠️ ¿BORRAR TODOS los participantes, fotos y comentarios?')) {
-                participantes = [];
-                misVotos = { creativo: null, terror: null, actitud: null };
-                localStorage.removeItem('misVotos_halloween2026');
-                guardarEnStorage();
-                actualizarAdminPanel();
-                mostrarAviso('🔥 Fiesta reiniciada desde cero.');
+        async function reiniciarTodo() {
+            if (confirm('⚠️ ¿BORRAR TODOS los participantes de la base de datos?')) {
+                if (supabaseClient) {
+                    for (let p of participantes) {
+                        await supabaseClient.from('participantes').delete().eq('id', p.id);
+                    }
+                    localStorage.removeItem('misVotos_halloween2026');
+                    misVotos = { creativo: null, terror: null, actitud: null };
+                    await cargarDatosSupabase();
+                    actualizarAdminPanel();
+                    mostrarAviso('🔥 Fiesta reiniciada desde cero.');
+                }
             }
         }
 
