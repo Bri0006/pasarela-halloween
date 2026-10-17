@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎃 Pasarela Halloween 2026 - Pijamada Especial</title>
+    <!-- CDN de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .font-creepster {
+            font-family: 'Creepster', cursive;
+        }
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: #0d0614;
+            color: #f3e8ff;
+            overflow-x: hidden;
+        }
+
+        /* Animación Emojis Flotantes */
+        @keyframes floatEffect {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0.8; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .spooky-float {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatEffect linear infinite;
+        }
+
+        /* Efectos Neón */
+        .text-neon-orange {
+            color: #ff6600;
+            text-shadow: 0 0 10px rgba(255, 102, 0, 0.8), 0 0 20px rgba(255, 102, 0, 0.4);
+        }
+        .text-neon-green {
+            color: #39ff14;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.8), 0 0 20px rgba(57, 255, 20, 0.4);
+        }
+        .bg-spooky-card {
+            background: rgba(26, 12, 42, 0.92);
+            border: 2px solid #5b21b6;
+            backdrop-filter: blur(8px);
+        }
+        .bg-spooky-card:hover {
+            border-color: #ff6600;
+        }
+        
+        .btn-giant {
+            box-shadow: 0 6px 0px rgba(0,0,0,0.5);
+            transition: all 0.15s ease-in-out;
+        }
+        .btn-giant:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px rgba(0,0,0,0.5);
+        }
+
+        /* Ocultar barra de desplazamiento manteniendo funcionalidad */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-orange-500 selection:text-black">
+
+    <!-- Fondo Animado de Emojis -->
+    <div id="spookyBackground" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- ENCABEZADO PRINCIPAL -->
+    <header class="relative z-10 bg-purple-950/90 border-b-2 border-orange-500/50 backdrop-blur-md px-4 py-4 shadow-xl">
+        <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <button onclick="irAHome()" class="flex items-center gap-3 group text-left focus:outline-none">
+                <span class="text-4xl sm:text-5xl animate-bounce">🎃</span>
+                <div>
+                    <h1 class="font-creepster text-3xl sm:text-4xl text-neon-orange tracking-wider">PASARELA HALLOWEEN 2026</h1>
+                    <p class="text-xs sm:text-sm text-green-400 font-semibold tracking-widest uppercase">PIJAMADA 2026 • EDICIÓN ESPECIAL 👻</p>
+                </div>
+            </button>
+
+            <div class="flex items-center gap-3">
+                <button onclick="abrirPoster()" class="bg-gradient-to-r from-purple-800 to-indigo-800 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm sm:text-base px-4 py-2.5 rounded-2xl border border-purple-400 shadow-md flex items-center gap-2 transition">
+                    🖼️ <span>Póster Familiar</span>
+                </button>
+                
+                <button id="btnSalir" onclick="irAHome()" class="hidden bg-red-600 hover:bg-red-700 text-white font-bold text-sm sm:text-base px-4 py-2.5 rounded-2xl shadow-md flex items-center gap-2 transition border border-red-400">
+                    🚪 <span>Menú</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- BANNER DE HORARIOS/ESTADO -->
+    <div id="bannerEstado" class="relative z-10 bg-orange-950/80 border-b border-orange-500/30 px-4 py-2 text-center text-xs sm:text-sm font-bold text-orange-200">
+        <!-- Notificación de tiempo restante -->
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="relative z-10 max-w-6xl mx-auto p-4 sm:p-6 w-full flex-grow">
+
+        <!-- ================= PANTALLA 1: INICIO ================= -->
+        <section id="secHome" class="space-y-8 my-auto pt-4">
+            <div class="text-center space-y-3">
+                <h2 class="text-3xl sm:text-5xl font-black text-neon-orange font-creepster tracking-wider">¡BIENVENIDOS FAMILIA! 🧙‍♀️</h2>
+                <p class="text-lg sm:text-2xl text-purple-200">Elige quién eres presionando una de las siguientes opciones gigantes:</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                
+                <!-- Opción 1: JURADO (ENTRADA DIRECTA) -->
+                <div class="bg-spooky-card rounded-3xl p-6 text-center space-y-6 flex flex-col justify-between shadow-2xl hover:scale-105 transition-transform duration-300">
+                    <div class="space-y-3">
+                        <div class="text-6xl my-2">👑</div>
+                        <h3 class="text-3xl font-bold text-neon-orange">JURADO / VOTAR</h3>
+                        <p class="text-base text-purple-200">¡Mira los disfraces de la familia y vota por tus favoritos libremente sin claves!</p>
+                    </div>
+                    <button onclick="entrarJuradoDirecto()" class="btn-giant w-full py-5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-black font-black text-2xl rounded-2xl border-2 border-amber-300 shadow-xl uppercase tracking-wider">
+                        🗳️ VOTAR AHORA
+                    </button>
+                </div>
+
+                <!-- Opción 2: PARTICIPANTE (PIN: 123) -->
+                <div class="bg-spooky-card rounded-3xl p-6 text-center space-y-6 flex flex-col justify-between shadow-2xl hover:scale-105 transition-transform duration-300">
+                    <div class="space-y-3">
+                        <div class="text-6xl my-2">📸</div>
+                        <h3 class="text-3xl font-bold text-neon-green">SOY PARTICIPANTE</h3>
+                        <p class="text-base text-purple-200">Sube hasta 3 fotos y 1 video luciendo tu disfraz de Halloween.</p>
+                    </div>
+                    <button onclick="solicitarPin('participante')" class="btn-giant w-full py-5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-black font-black text-2xl rounded-2xl border-2 border-green-300 shadow-xl uppercase tracking-wider">
+                        ✨ SUBIR DISFRAZ
+                    </button>
+                </div>
+
+                <!-- Opción 3: ADMINISTRADOR (PIN: bri06.) -->
+                <div class="bg-spooky-card rounded-3xl p-6 text-center space-y-6 flex flex-col justify-between shadow-2xl hover:scale-105 transition-transform duration-300">
+                    <div class="space-y-3">
+                        <div class="text-6xl my-2">🏆</div>
+                        <h3 class="text-3xl font-bold text-purple-300">ADMINISTRADOR</h3>
+                        <p class="text-base text-purple-200">Configurar horarios, moderar fotos, ver los ganadores y administrar.</p>
+                    </div>
+                    <button onclick="solicitarPin('admin')" class="btn-giant w-full py-5 bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-white font-black text-2xl rounded-2xl border-2 border-purple-400 shadow-xl uppercase tracking-wider">
+                        ⚙️ PANEL ADMIN
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Botón Grande de Póster -->
+            <div class="pt-6 text-center">
+                <button onclick="abrirPoster()" class="btn-giant w-full max-w-2xl py-4 bg-purple-900/90 hover:bg-purple-800 text-purple-100 font-bold text-xl rounded-2xl border-2 border-purple-500 shadow-2xl flex items-center justify-center gap-3 mx-auto">
+                    <span>📷</span> Ver Póster / Collage Familiar de Recuerdos 🖼️
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= PANTALLA 2: GALERÍA JURADO ================= -->
+        <section id="secJurado" class="hidden space-y-8">
+            <div class="bg-purple-900/40 p-6 rounded-3xl border-2 border-orange-500 text-center space-y-2">
+                <h2 class="text-3xl sm:text-4xl font-black text-neon-orange">🗳️ Galería de Concursantes</h2>
+                <p class="text-lg sm:text-xl text-purple-200">¡Toca los botones verdes de cada participante para darle tu voto!</p>
+            </div>
+
+            <div id="galeriaContenedor" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </section>
+
+        <!-- ================= PANTALLA 3: SUBIR PARTICIPANTE ================= -->
+        <section id="secParticipante" class="hidden max-w-2xl mx-auto space-y-6">
+            <div class="bg-spooky-card p-6 sm:p-8 rounded-3xl space-y-6 shadow-2xl border-2 border-green-500">
+                <div class="text-center space-y-2">
+                    <span class="text-5xl">🎭</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-neon-green">Sube tu Disfraz</h2>
+                    <p class="text-base text-purple-200">Puedes agregar hasta 3 Fotos y 1 Video corto</p>
+                </div>
+
+                <form id="formParticipante" onsubmit="guardarParticipante(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-xl font-bold mb-2 text-orange-400">👤 Tu Nombre:</label>
+                        <input type="text" id="pNombre" required placeholder="Ej: Tía María, Juanito, Abue Elena" 
+                               class="w-full bg-purple-950/90 border-2 border-purple-500 rounded-2xl p-4 text-xl text-white focus:outline-none focus:border-orange-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xl font-bold mb-2 text-orange-400">🧛 Personaje / Disfraz:</label>
+                        <input type="text" id="pPersonaje" required placeholder="Ej: Bruja Elegante, Vampiro, Merlina" 
+                               class="w-full bg-purple-950/90 border-2 border-purple-500 rounded-2xl p-4 text-xl text-white focus:outline-none focus:border-orange-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xl font-bold mb-1 text-orange-400">📸 Fotos del Disfraz (Hasta 3):</label>
+                        <p class="text-xs text-purple-300 mb-2">Puedes seleccionar 1, 2 o 3 fotos a la vez.</p>
+                        <input type="file" id="pFotos" accept="image/*" multiple required 
+                               class="w-full bg-purple-950/90 border-2 border-purple-500 rounded-2xl p-3 text-base text-white file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-base file:font-bold file:bg-orange-500 file:text-black hover:file:bg-orange-600">
+                    </div>
+
+                    <div>
+                        <label class="block text-xl font-bold mb-1 text-orange-400">🎥 Video Corto (Opcional - 1 Video):</label>
+                        <input type="file" id="pVideo" accept="video/*" 
+                               class="w-full bg-purple-950/90 border-2 border-purple-500 rounded-2xl p-3 text-base text-white file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-base file:font-bold file:bg-purple-500 file:text-white hover:file:bg-purple-600">
+                    </div>
+
+                    <button type="submit" id="btnSubirSubmit" class="btn-giant w-full py-5 bg-gradient-to-r from-green-500 to-emerald-600 text-black font-black text-2xl rounded-2xl border-2 border-green-300 shadow-xl uppercase tracking-wider mt-4">
+                        🚀 PUBLICAR EN LA PASARELA
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= PANTALLA 4: PANEL ADMINISTRACIÓN ================= -->
+        <section id="secAdmin" class="hidden space-y-8">
+            <div class="bg-purple-900/40 p-6 rounded-3xl border-2 border-purple-500 text-center space-y-2">
+                <h2 class="text-3xl sm:text-4xl font-black text-purple-300">⚙️ Panel de Control & Moderación</h2>
+                <p class="text-lg text-purple-200">Gestiona horarios, elimina elementos inapropiados y ve el podio</p>
+            </div>
+
+            <!-- CONFIGURACIÓN DE HORARIOS Y LÍMITES -->
+            <div class="bg-spooky-card p-6 rounded-3xl border-2 border-indigo-500 space-y-4">
+                <h3 class="text-2xl font-bold text-indigo-300 flex items-center gap-2">
+                    ⏱️ Control de Horarios de la Pijamada
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-purple-950/80 p-4 rounded-2xl border border-purple-700 space-y-3">
+                        <label class="block font-bold text-orange-400">🔒 Hora Límite para Subir Disfraces:</label>
+                        <input type="time" id="limiteInscripcion" class="w-full bg-purple-900 border border-purple-500 rounded-xl p-3 text-white text-lg focus:outline-none">
+                        <button onclick="guardarLimite('inscripcion')" class="w-full py-2 bg-orange-500 hover:bg-orange-600 text-black font-bold rounded-xl">
+                            Guardar Hora Límite Subida
+                        </button>
+                    </div>
+
+                    <div class="bg-purple-950/80 p-4 rounded-2xl border border-purple-700 space-y-3">
+                        <label class="block font-bold text-green-400">🗳️ Hora Límite para Votación:</label>
+                        <input type="time" id="limiteVotacion" class="w-full bg-purple-900 border border-purple-500 rounded-xl p-3 text-white text-lg focus:outline-none">
+                        <button onclick="guardarLimite('votacion')" class="w-full py-2 bg-green-500 hover:bg-green-600 text-black font-bold rounded-xl">
+                            Guardar Hora Límite Votos
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATS -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                <div class="bg-purple-950/80 p-5 rounded-2xl border border-purple-700">
+                    <p class="text-base text-purple-300">Total Concursantes</p>
+                    <p id="statParticipantes" class="text-4xl font-black text-orange-400">0</p>
+                </div>
+                <div class="bg-purple-950/80 p-5 rounded-2xl border border-purple-700">
+                    <p class="text-base text-purple-300">Total Votos Emitidos</p>
+                    <p id="statVotos" class="text-4xl font-black text-green-400">0</p>
+                </div>
+                <div class="bg-purple-950/80 p-5 rounded-2xl border border-purple-700">
+                    <p class="text-base text-purple-300">Comentarios Dejados</p>
+                    <p id="statComentarios" class="text-4xl font-black text-purple-400">0</p>
+                </div>
+            </div>
+
+            <!-- PODIO GANADORES -->
+            <div class="space-y-4">
+                <h3 class="text-3xl font-black text-yellow-400 text-center flex items-center justify-center gap-2">
+                    🏆 PODIO DE GANADORES EN TIEMPO REAL 🏆
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-spooky-card p-6 rounded-3xl border-2 border-yellow-500 text-center space-y-3">
+                        <span class="text-5xl">🎨</span>
+                        <h4 class="text-xl font-bold text-yellow-400">MÁS CREATIVO</h4>
+                        <div id="podioCreativo" class="text-xl font-black text-white">Cargando...</div>
+                    </div>
+
+                    <div class="bg-spooky-card p-6 rounded-3xl border-2 border-red-500 text-center space-y-3">
+                        <span class="text-5xl">👻</span>
+                        <h4 class="text-xl font-bold text-red-400">MÁS TERRORÍFICO</h4>
+                        <div id="podioTerror" class="text-xl font-black text-white">Cargando...</div>
+                    </div>
+
+                    <div class="bg-spooky-card p-6 rounded-3xl border-2 border-emerald-500 text-center space-y-3">
+                        <span class="text-5xl">🎭</span>
+                        <h4 class="text-xl font-bold text-emerald-400">MEJOR ACTITUD</h4>
+                        <div id="podioActitud" class="text-xl font-black text-white">Cargando...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LISTA DE MODERACIÓN DE PARTICIPANTES -->
+            <div class="bg-spooky-card p-6 rounded-3xl border-2 border-purple-600 space-y-6">
+                <h3 class="text-2xl font-bold text-orange-400">🛡️ Moderación Granular de Concursantes</h3>
+                <p class="text-sm text-purple-300">Puedes eliminar a un participante completo o borrar fotos/videos individuales si son inapropiados.</p>
+                
+                <div id="listaModeracionAdmin" class="space-y-6">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+
+            <!-- MANTENIMIENTO GLOBAL -->
+            <div class="bg-red-950/30 p-6 rounded-3xl border-2 border-red-600/50 space-y-4 text-center">
+                <h3 class="text-2xl font-bold text-red-400">⚠️ Zona de Peligro Admin</h3>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="reiniciarVotos()" class="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold rounded-xl text-base">
+                        🔄 Reiniciar Todos los Votos
+                    </button>
+                    <button onclick="reiniciarTodo()" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-base">
+                        🔥 Borrar Todo (Reiniciar Fiesta)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 bg-purple-950 border-t border-purple-800 p-4 text-center text-purple-300 text-base">
+        🎃 Pasarela Halloween 2026 • Creado para la Familia 👻
+    </footer>
+
+    <!-- MODAL DE PÓSTER / COLLAGE FAMILIAR -->
+    <div id="modalPoster" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 hidden overflow-y-auto">
+        <div class="bg-purple-950 border-2 border-orange-500 rounded-3xl p-6 max-w-4xl w-full space-y-6 shadow-2xl my-auto">
+            <div class="flex justify-between items-center border-b border-purple-800 pb-4">
+                <h3 class="text-2xl sm:text-3xl font-black text-neon-orange font-creepster">📸 PÓSTER RECUERDO DE FAMILIA</h3>
+                <button onclick="cerrarPoster()" class="bg-red-600 text-white font-bold px-4 py-2 rounded-xl">✕ Cerrar</button>
+            </div>
+
+            <!-- ÁREA DEL PÓSTER -->
+            <div id="contenidoPoster" class="bg-gradient-to-b from-purple-950 to-purple-900 border-2 border-orange-500/60 rounded-2xl p-6 space-y-6 text-center">
+                <div class="space-y-1">
+                    <h2 class="font-creepster text-3xl sm:text-5xl text-neon-orange tracking-widest">PASARELA HALLOWEEN 2026</h2>
+                    <p class="text-base sm:text-xl text-green-400 font-bold">✨ RECUERDO INOLVIDABLE DE LA PIJAMADA FAMILIAR ✨</p>
+                </div>
+
+                <div id="posterGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pt-4">
+                    <!-- Generado dinámicamente -->
+                </div>
+
+                <p class="text-xs sm:text-sm text-purple-300 italic pt-4">¡Gracias a todos por participar con tanta creatividad y amor! 🎃👻</p>
+            </div>
+
+            <div class="text-center pt-2">
+                <button onclick="window.print()" class="btn-giant px-8 py-3 bg-emerald-500 hover:bg-emerald-600 text-black font-black text-lg rounded-2xl shadow-xl">
+                    📥 Descargar / Imprimir Póster de Recuerdos
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PIN -->
+    <div id="modalPin" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-purple-950 border-2 border-orange-500 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 shadow-2xl text-center">
+            <span class="text-5xl">🔒</span>
+            <h3 id="pinTitulo" class="text-2xl sm:text-3xl font-bold text-orange-400">Ingresa la Clave</h3>
+            <input type="password" id="pinInput" placeholder="Introduce el PIN" 
+                   class="w-full bg-purple-900/80 border-2 border-purple-500 rounded-2xl p-4 text-center text-2xl tracking-widest text-white focus:outline-none focus:border-orange-500">
+            
+            <div id="pinError" class="text-red-400 font-bold hidden">❌ PIN incorrecto. Inténtalo de nuevo.</div>
+
+            <div class="flex gap-4">
+                <button onclick="cerrarPin()" class="w-1/2 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl font-bold text-lg">
+                    Cancelar
+                </button>
+                <button onclick="verificarPin()" class="w-1/2 py-3 bg-orange-500 hover:bg-orange-600 text-black font-bold rounded-xl text-lg">
+                    Entrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE AVISO -->
+    <div id="modalAviso" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-purple-950 border-2 border-green-500 rounded-3xl p-6 max-w-md w-full space-y-6 text-center">
+            <div class="text-6xl">🎉</div>
+            <h3 id="avisoTexto" class="text-2xl font-bold text-white">¡Operación exitosa!</h3>
+            <button onclick="cerrarAviso()" class="w-full py-4 bg-green-500 hover:bg-green-600 text-black font-black text-xl rounded-2xl">
+                Aceptar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DATOS DE PRUEBA INICIALES
+        const participantesEjemplo = [
+            {
+                id: 'p1',
+                nombre: 'Tía Claudia',
+                personaje: 'Bruja de la Noche 🧙‍♀️',
+                fotos: [
+                    'https://images.unsplash.com/photo-1509557965875-b88c97052f0e?auto=format&fit=crop&w=800&q=80',
+                    'https://images.unsplash.com/photo-1512314889357-e157c22f938d?auto=format&fit=crop&w=800&q=80'
+                ],
+                video: null,
+                votos: { creativo: 4, terror: 2, actitud: 5 },
+                comentarios: ['¡El mejor sombrero!', '¡Asustó a los niños jaja!']
+            },
+            {
+                id: 'p2',
+                nombre: 'Mateo',
+                personaje: 'Calavera Zombie 💀',
+                fotos: [
+                    'https://images.unsplash.com/photo-1508361001413-7a9dca21d08a?auto=format&fit=crop&w=800&q=80'
+                ],
+                video: null,
+                votos: { creativo: 3, terror: 6, actitud: 3 },
+                comentarios: ['Increíble maquillaje mateito']
+            }
+        ];
+
+        // ESTADO GLOBAL
+        let participantes = [];
+        let misVotos = JSON.parse(localStorage.getItem('misVotos_halloween2026')) || { creativo: null, terror: null, actitud: null };
+        let horarios = JSON.parse(localStorage.getItem('horarios_halloween2026')) || { limiteInscripcion: '', limiteVotacion: '' };
+        let tipoAccesoPendiente = '';
+
+        window.onload = function() {
+            crearEfectoFlotante();
+            cargarDatos();
+            verificarHorariosBanners();
+        };
+
+        function cargarDatos() {
+            const guardados = localStorage.getItem('participantes_halloween2026');
+            if (guardados) {
+                try {
+                    participantes = JSON.parse(guardados);
+                } catch(e) {
+                    participantes = participantesEjemplo;
+                }
+            } else {
+                participantes = participantesEjemplo;
+                guardarEnStorage();
+            }
+        }
+
+        function guardarEnStorage() {
+            localStorage.setItem('participantes_halloween2026', JSON.stringify(participantes));
+        }
+
+        // GENERAR EMOJIS ANIMADOS DE FONDO
+        function crearEfectoFlotante() {
+            const contenedor = document.getElementById('spookyBackground');
+            const emojis = ['🎃', '👻', '🦇', '💀', '🕷️', '🍬', '🕸️'];
+            for (let i = 0; i < 22; i++) {
+                const el = document.createElement('div');
+                el.className = 'spooky-float text-3xl sm:text-4xl';
+                el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = `${Math.random() * 100}vw`;
+                el.style.animationDuration = `${6 + Math.random() * 8}s`;
+                el.style.animationDelay = `${Math.random() * 5}s`;
+                contenedor.appendChild(el);
+            }
+        }
+
+        // NAVEGACIÓN Y PANTALLAS
+        function ocultarSecciones() {
+            document.getElementById('secHome').classList.add('hidden');
+            document.getElementById('secJurado').classList.add('hidden');
+            document.getElementById('secParticipante').classList.add('hidden');
+            document.getElementById('secAdmin').classList.add('hidden');
+            document.getElementById('btnSalir').classList.remove('hidden');
+        }
+
+        function irAHome() {
+            document.getElementById('secHome').classList.remove('hidden');
+            document.getElementById('secJurado').classList.add('hidden');
+            document.getElementById('secParticipante').classList.add('hidden');
+            document.getElementById('secAdmin').classList.add('hidden');
+            document.getElementById('btnSalir').classList.add('hidden');
+            verificarHorariosBanners();
+        }
+
+        function entrarJuradoDirecto() {
+            ocultarSecciones();
+            document.getElementById('secJurado').classList.remove('hidden');
+            renderizarGaleria();
+        }
+
+        // CONTROL DE HORARIOS DE FIESTA
+        function guardarLimite(tipo) {
+            if (tipo === 'inscripcion') {
+                horarios.limiteInscripcion = document.getElementById('limiteInscripcion').value;
+            } else {
+                horarios.limiteVotacion = document.getElementById('limiteVotacion').value;
+            }
+            localStorage.setItem('horarios_halloween2026', JSON.stringify(horarios));
+            mostrarAviso('⏰ Configuración de horario guardada exitosamente.');
+            verificarHorariosBanners();
+        }
+
+        function estaHoraVencida(horaStr) {
+            if (!horaStr) return false;
+            const ahora = new Date();
+            const [h, m] = horaStr.split(':').map(Number);
+            const limite = new Date();
+            limite.setHours(h, m, 0, 0);
+            return ahora > limite;
+        }
+
+        function verificarHorariosBanners() {
+            const banner = document.getElementById('bannerEstado');
+            let msjs = [];
+
+            if (horarios.limiteInscripcion) {
+                if (estaHoraVencida(horarios.limiteInscripcion)) {
+                    msjs.push('🔒 Inscripciones cerradas por hora límite (' + horarios.limiteInscripcion + ')');
+                } else {
+                    msjs.push('⏳ Límite para subir disfraces: ' + horarios.limiteInscripcion);
+                }
+            }
+
+            if (horarios.limiteVotacion) {
+                if (estaHoraVencida(horarios.limiteVotacion)) {
+                    msjs.push('🛑 Votaciones cerradas por hora límite (' + horarios.limiteVotacion + ')');
+                } else {
+                    msjs.push('⏳ Límite para votar: ' + horarios.limiteVotacion);
+                }
+            }
+
+            banner.innerHTML = msjs.length > 0 ? msjs.join(' • ') : '🎃 ¡La Pasarela de la Pijamada está en vivo y activa!';
+        }
+
+        // PINS DE SEGURIDAD
+        function solicitarPin(tipo) {
+            if (tipo === 'participante' && estaHoraVencida(horarios.limiteInscripcion)) {
+                mostrarAviso('🔒 Lo sentimos, el tiempo para subir participantes ya finalizó por hoy.');
+                return;
+            }
+
+            tipoAccesoPendiente = tipo;
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinError').classList.add('hidden');
+            document.getElementById('pinTitulo').innerText = tipo === 'participante' ? '🔑 PIN de Participante' : '👑 PIN de Administrador';
+            document.getElementById('modalPin').classList.remove('hidden');
+            document.getElementById('pinInput').focus();
+        }
+
+        function cerrarPin() {
+            document.getElementById('modalPin').classList.add('hidden');
+        }
+
+        function verificarPin() {
+            const val = document.getElementById('pinInput').value.trim();
+            const err = document.getElementById('pinError');
+
+            if (tipoAccesoPendiente === 'participante' && val === '123') {
+                cerrarPin();
+                ocultarSecciones();
+                document.getElementById('secParticipante').classList.remove('hidden');
+            } else if (tipoAccesoPendiente === 'admin' && val === 'bri06.') {
+                cerrarPin();
+                ocultarSecciones();
+                document.getElementById('secAdmin').classList.remove('hidden');
+                document.getElementById('limiteInscripcion').value = horarios.limiteInscripcion || '';
+                document.getElementById('limiteVotacion').value = horarios.limiteVotacion || '';
+                actualizarAdminPanel();
+            } else {
+                err.classList.remove('hidden');
+            }
+        }
+
+        // DIBUJAR GALERÍA DEL JURADO
+        function renderizarGaleria() {
+            const cont = document.getElementById('galeriaContenedor');
+            cont.innerHTML = '';
+
+            if (participantes.length === 0) {
+                cont.innerHTML = `
+                    <div class="col-span-full text-center py-12 space-y-4">
+                        <span class="text-7xl">👻</span>
+                        <h3 class="text-3xl font-bold text-orange-400">Aún no hay disfraces subidos</h3>
+                        <p class="text-xl text-purple-200">¡Sé el primero en subir fotos usando el PIN 123!</p>
+                    </div>`;
+                return;
+            }
+
+            participantes.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'bg-spooky-card rounded-3xl p-5 space-y-5 shadow-2xl flex flex-col justify-between border-2 border-purple-500/60';
+
+                // Fotos HTML (Soporta múltiples fotos)
+                let fotosHtml = '';
+                if (p.fotos && p.fotos.length > 0) {
+                    fotosHtml = `
+                        <div class="space-y-2">
+                            <img id="mainImg_${p.id}" src="${p.fotos[0]}" class="w-full h-80 object-cover rounded-2xl border-2 border-purple-500/50" onerror="this.src='https://placehold.co/600x400/2a0c2a/ff6600?text=Foto+no+disponible'">
+                            ${p.fotos.length > 1 ? `
+                                <div class="flex gap-2 overflow-x-auto pb-1">
+                                    ${p.fotos.map((f, idx) => `
+                                        <img src="${f}" onclick="cambiarFotoPrincipal('${p.id}', '${f}')" class="w-16 h-16 object-cover rounded-xl border-2 border-purple-400 cursor-pointer hover:scale-105 transition flex-shrink-0">
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>`;
+                }
+
+                // Video HTML
+                let videoHtml = '';
+                if (p.video) {
+                    videoHtml = `
+                        <div class="pt-2">
+                            <p class="text-xs font-bold text-purple-300 mb-1">🎥 Video de Presentación:</p>
+                            <video src="${p.video}" controls class="w-full h-48 object-cover rounded-2xl border-2 border-purple-500/50"></video>
+                        </div>`;
+                }
+
+                // Comentarios HTML
+                let comentariosHtml = (p.comentarios || []).map(c => `
+                    <div class="bg-purple-950/80 p-2.5 rounded-xl border border-purple-800 text-sm text-purple-200">
+                        💬 ${escapeHtml(c)}
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-2xl font-black text-orange-400">${escapeHtml(p.nombre)}</h3>
+                                <p class="text-xl text-green-400 font-bold">🦸‍♂️ ${escapeHtml(p.personaje)}</p>
+                            </div>
+                        </div>
+
+                        ${fotosHtml}
+                        ${videoHtml}
+
+                        <!-- BOTONES DE VOTACIÓN -->
+                        <div class="space-y-2 pt-2">
+                            <p class="text-center font-bold text-purple-300 text-sm">Vota en estas categorías:</p>
+                            <div class="grid grid-cols-1 gap-2">
+                                <button onclick="votar('${p.id}', 'creativo')" 
+                                        class="py-3 px-4 rounded-xl font-bold text-base sm:text-lg flex justify-between items-center transition ${misVotos.creativo === p.id ? 'bg-amber-400 text-black border-2 border-white' : 'bg-purple-900/80 hover:bg-amber-500 hover:text-black text-amber-300 border border-amber-500/40'}">
+                                    <span>🎨 Más Creativo</span>
+                                    <span class="bg-black/30 px-3 py-1 rounded-full text-xs sm:text-sm">${p.votos.creativo} votos</span>
+                                </button>
+
+                                <button onclick="votar('${p.id}', 'terror')" 
+                                        class="py-3 px-4 rounded-xl font-bold text-base sm:text-lg flex justify-between items-center transition ${misVotos.terror === p.id ? 'bg-red-500 text-black border-2 border-white' : 'bg-purple-900/80 hover:bg-red-600 hover:text-white text-red-400 border border-red-500/40'}">
+                                    <span>👻 Más Terrorífico</span>
+                                    <span class="bg-black/30 px-3 py-1 rounded-full text-xs sm:text-sm">${p.votos.terror} votos</span>
+                                </button>
+
+                                <button onclick="votar('${p.id}', 'actitud')" 
+                                        class="py-3 px-4 rounded-xl font-bold text-base sm:text-lg flex justify-between items-center transition ${misVotos.actitud === p.id ? 'bg-emerald-400 text-black border-2 border-white' : 'bg-purple-900/80 hover:bg-emerald-500 hover:text-black text-emerald-300 border border-emerald-500/40'}">
+                                    <span>🎭 Mejor Actitud</span>
+                                    <span class="bg-black/30 px-3 py-1 rounded-full text-xs sm:text-sm">${p.votos.actitud} votos</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COMENTARIOS -->
+                    <div class="space-y-3 pt-4 border-t border-purple-800">
+                        <div class="max-h-32 overflow-y-auto space-y-2">
+                            ${comentariosHtml.length > 0 ? comentariosHtml : '<p class="text-xs text-purple-400 italic text-center">¡Deja el primer mensaje de cariño!</p>'}
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="com_${p.id}" placeholder="Escribe un mensaje..." 
+                                   class="w-full bg-purple-950 border border-purple-600 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500">
+                            <button onclick="agregarComentario('${p.id}')" class="bg-orange-500 hover:bg-orange-600 text-black font-bold px-4 rounded-xl text-sm">
+                                Enviar
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                cont.appendChild(card);
+            });
+        }
+
+        function cambiarFotoPrincipal(id, url) {
+            const main = document.getElementById(`mainImg_${id}`);
+            if (main) main.src = url;
+        }
+
+        // EMITIR VOTOS
+        function votar(idParticipante, categoria) {
+            if (estaHoraVencida(horarios.limiteVotacion)) {
+                mostrarAviso('🛑 Las votaciones han sido cerradas.');
+                return;
+            }
+
+            if (misVotos[categoria] === idParticipante) {
+                mostrarAviso('✨ Ya le diste tu voto en esta categoría.');
+                return;
+            }
+
+            if (misVotos[categoria]) {
+                const anterior = participantes.find(p => p.id === misVotos[categoria]);
+                if (anterior && anterior.votos[categoria] > 0) {
+                    anterior.votos[categoria]--;
+                }
+            }
+
+            const actual = participantes.find(p => p.id === idParticipante);
+            if (actual) {
+                actual.votos[categoria]++;
+                misVotos[categoria] = idParticipante;
+
+                localStorage.setItem('misVotos_halloween2026', JSON.stringify(misVotos));
+                guardarEnStorage();
+                renderizarGaleria();
+                mostrarAviso('🎉 ¡Tu voto ha sido registrado!');
+            }
+        }
+
+        // AGREGAR COMENTARIO
+        function agregarComentario(id) {
+            const input = document.getElementById(`com_${id}`);
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            const p = participantes.find(x => x.id === id);
+            if (p) {
+                if (!p.comentarios) p.comentarios = [];
+                p.comentarios.push(texto);
+                guardarEnStorage();
+                renderizarGaleria();
+                mostrarAviso('💬 ¡Comentario agregado!');
+            }
+        }
+
+        // GUARDAR NUEVO PARTICIPANTE (PROCESA MULTIPLES FOTOS Y VIDEO)
+        async function guardarParticipante(e) {
+            e.preventDefault();
+
+            if (estaHoraVencida(horarios.limiteInscripcion)) {
+                mostrarAviso('🔒 El tiempo para inscribir disfraces ya terminó.');
+                return;
+            }
+
+            const btnSubmit = document.getElementById('btnSubirSubmit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = '⏳ PROCESANDO FOTOS Y VIDEO...';
+
+            const nombre = document.getElementById('pNombre').value.trim();
+            const personaje = document.getElementById('pPersonaje').value.trim();
+            const fotosInput = document.getElementById('pFotos').files;
+            const videoInput = document.getElementById('pVideo').files[0];
+
+            if (fotosInput.length === 0) {
+                mostrarAviso('❌ Por favor adjunta al menos 1 foto.');
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = '🚀 PUBLICAR EN LA PASARELA';
+                return;
+            }
+
+            if (fotosInput.length > 3) {
+                mostrarAviso('⚠️ Puedes seleccionar un máximo de 3 fotos.');
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = '🚀 PUBLICAR EN LA PASARELA';
+                return;
+            }
+
+            try {
+                // Convertir fotos a Base64
+                const fotosBase64 = [];
+                for (let i = 0; i < fotosInput.length; i++) {
+                    const b64 = await leerArchivoBase64(fotosInput[i]);
+                    fotosBase64.push(b64);
+                }
+
+                // Convertir video a Base64 si existe
+                let videoBase64 = null;
+                if (videoInput) {
+                    videoBase64 = await leerArchivoBase64(videoInput);
+                }
+
+                const nuevo = {
+                    id: 'p_' + Date.now(),
+                    nombre: nombre,
+                    personaje: personaje,
+                    fotos: fotosBase64,
+                    video: videoBase64,
+                    votos: { creativo: 0, terror: 0, actitud: 0 },
+                    comentarios: []
+                };
+
+                participantes.push(nuevo);
+                guardarEnStorage();
+
+                document.getElementById('formParticipante').reset();
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = '🚀 PUBLICAR EN LA PASARELA';
+
+                mostrarAviso('🎃 ¡Participante agregado con éxito!');
+
+                // Redirigir y forzar re-renderizado instantáneo
+                setTimeout(() => {
+                    entrarJuradoDirecto();
+                }, 1200);
+
+            } catch (err) {
+                console.error(err);
+                mostrarAviso('❌ Ocurrió un error al cargar las fotos/videos. Intenta con archivos más pequeños.');
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = '🚀 PUBLICAR EN LA PASARELA';
+            }
+        }
+
+        function leerArchivoBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = err => reject(err);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // PANEL DE ADMIN & MODERACIÓN
+        function actualizarAdminPanel() {
+            document.getElementById('statParticipantes').innerText = participantes.length;
+
+            let totalVotos = 0;
+            let totalComentarios = 0;
+
+            let maxCreativo = { nombre: 'Nadie aún', votos: -1 };
+            let maxTerror = { nombre: 'Nadie aún', votos: -1 };
+            let maxActitud = { nombre: 'Nadie aún', votos: -1 };
+
+            participantes.forEach(p => {
+                const sumaVotos = (p.votos.creativo || 0) + (p.votos.terror || 0) + (p.votos.actitud || 0);
+                totalVotos += sumaVotos;
+                totalComentarios += (p.comentarios || []).length;
+
+                if (p.votos.creativo > maxCreativo.votos) maxCreativo = { nombre: `${p.nombre}`, votos: p.votos.creativo };
+                if (p.votos.terror > maxTerror.votos) maxTerror = { nombre: `${p.nombre}`, votos: p.votos.terror };
+                if (p.votos.actitud > maxActitud.votos) maxActitud = { nombre: `${p.nombre}`, votos: p.votos.actitud };
+            });
+
+            document.getElementById('statVotos').innerText = totalVotos;
+            document.getElementById('statComentarios').innerText = totalComentarios;
+
+            document.getElementById('podioCreativo').innerHTML = maxCreativo.votos > 0 ? `${maxCreativo.nombre}<br><span class="text-sm text-yellow-300">${maxCreativo.votos} Votos</span>` : 'Sin votos aún';
+            document.getElementById('podioTerror').innerHTML = maxTerror.votos > 0 ? `${maxTerror.nombre}<br><span class="text-sm text-red-300">${maxTerror.votos} Votos</span>` : 'Sin votos aún';
+            document.getElementById('podioActitud').innerHTML = maxActitud.votos > 0 ? `${maxActitud.nombre}<br><span class="text-sm text-emerald-300">${maxActitud.votos} Votos</span>` : 'Sin votos aún';
+
+            renderizarModeracionAdmin();
+        }
+
+        function renderizarModeracionAdmin() {
+            const list = document.getElementById('listaModeracionAdmin');
+            list.innerHTML = '';
+
+            if (participantes.length === 0) {
+                list.innerHTML = '<p class="text-center text-purple-300">No hay concursantes registrados.</p>';
+                return;
+            }
+
+            participantes.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'bg-purple-950/80 p-4 rounded-2xl border border-purple-700 space-y-4';
+
+                let fotosListHtml = (p.fotos || []).map((f, i) => `
+                    <div class="relative inline-block">
+                        <img src="${f}" class="w-20 h-20 object-cover rounded-xl border border-purple-400">
+                        <button onclick="borrarFotoIndividual('${p.id}', ${i})" class="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg">✕</button>
+                    </div>
+                `).join('');
+
+                let videoHtml = p.video ? `
+                    <div class="relative inline-block">
+                        <video src="${p.video}" class="w-24 h-20 object-cover rounded-xl border border-purple-400"></video>
+                        <button onclick="borrarVideoIndividual('${p.id}')" class="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg">✕</button>
+                    </div>
+                ` : '';
+
+                item.innerHTML = `
+                    <div class="flex flex-wrap justify-between items-center gap-2">
+                        <div>
+                            <h4 class="text-xl font-bold text-orange-400">${escapeHtml(p.nombre)}</h4>
+                            <p class="text-sm text-green-400 font-semibold">${escapeHtml(p.personaje)}</p>
+                        </div>
+                        <button onclick="borrarParticipanteCompleto('${p.id}')" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-sm">
+                            🗑️ Borrar Participante Completo
+                        </button>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t border-purple-800">
+                        <p class="text-xs text-purple-300 font-bold">Fotos subidas (Presiona ✕ para borrar foto inapropiada):</p>
+                        <div class="flex flex-wrap gap-3">
+                            ${fotosListHtml || '<p class="text-xs text-purple-400 italic">Sin fotos</p>'}
+                        </div>
+                    </div>
+
+                    ${p.video ? `
+                    <div class="space-y-2 pt-2 border-t border-purple-800">
+                        <p class="text-xs text-purple-300 font-bold">Video subido (Presiona ✕ para borrar video):</p>
+                        ${videoHtml}
+                    </div>
+                    ` : ''}
+                `;
+
+                list.appendChild(item);
+            });
+        }
+
+        function borrarParticipanteCompleto(id) {
+            if (confirm('¿Eliminar a este participante completamente?')) {
+                participantes = participantes.filter(p => p.id !== id);
+                // Limpiar sus votos grabados en caso de que fuera votado
+                Object.keys(misVotos).forEach(cat => {
+                    if (misVotos[cat] === id) misVotos[cat] = null;
+                });
+                localStorage.setItem('misVotos_halloween2026', JSON.stringify(misVotos));
+                guardarEnStorage();
+                actualizarAdminPanel();
+                mostrarAviso('🗑️ Participante eliminado.');
+            }
+        }
+
+        function borrarFotoIndividual(pId, index) {
+            const p = participantes.find(x => x.id === pId);
+            if (p && p.fotos) {
+                p.fotos.splice(index, 1);
+                guardarEnStorage();
+                actualizarAdminPanel();
+                mostrarAviso('📷 Foto borrada.');
+            }
+        }
+
+        function borrarVideoIndividual(pId) {
+            const p = participantes.find(x => x.id === pId);
+            if (p) {
+                p.video = null;
+                guardarEnStorage();
+                actualizarAdminPanel();
+                mostrarAviso('🎥 Video borrado.');
+            }
+        }
+
+        function reiniciarVotos() {
+            if (confirm('¿Reiniciar todos los votos a 0?')) {
+                participantes.forEach(p => {
+                    p.votos = { creativo: 0, terror: 0, actitud: 0 };
+                });
+                misVotos = { creativo: null, terror: null, actitud: null };
+                localStorage.removeItem('misVotos_halloween2026');
+                guardarEnStorage();
+                actualizarAdminPanel();
+                mostrarAviso('🔄 Todos los votos han vuelto a 0.');
+            }
+        }
+
+        function reiniciarTodo() {
+            if (confirm('⚠️ ¿BORRAR TODOS los participantes, fotos y comentarios?')) {
+                participantes = [];
+                misVotos = { creativo: null, terror: null, actitud: null };
+                localStorage.removeItem('misVotos_halloween2026');
+                guardarEnStorage();
+                actualizarAdminPanel();
+                mostrarAviso('🔥 Fiesta reiniciada desde cero.');
+            }
+        }
+
+        // PÓSTER FAMILIAR
+        function abrirPoster() {
+            const grid = document.getElementById('posterGrid');
+            grid.innerHTML = '';
+
+            if (participantes.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-purple-300 py-6 text-lg">Aún no hay fotos subidas para generar el póster de recuerdos.</p>';
+            } else {
+                participantes.forEach(p => {
+                    const fotoPrincipal = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/600x400/2a0c2a/ff6600?text=Foto+no+disponible';
+                    
+                    const item = document.createElement('div');
+                    item.className = 'bg-purple-900/90 border-2 border-orange-500/80 rounded-2xl p-2 space-y-2 shadow-lg';
+                    item.innerHTML = `
+                        <img src="${fotoPrincipal}" class="w-full h-36 sm:h-44 object-cover rounded-xl border border-purple-400">
+                        <div>
+                            <p class="font-black text-orange-400 text-sm sm:text-base leading-tight">${escapeHtml(p.nombre)}</p>
+                            <p class="text-xs text-green-300 font-semibold truncate">${escapeHtml(p.personaje)}</p>
+                        </div>
+                    `;
+                    grid.appendChild(item);
+                });
+            }
+
+            document.getElementById('modalPoster').classList.remove('hidden');
+        }
+
+        function cerrarPoster() {
+            document.getElementById('modalPoster').classList.add('hidden');
+        }
+
+        // UTILIDADES Y MODALES
+        function mostrarAviso(msg) {
+            document.getElementById('avisoTexto').innerText = msg;
+            document.getElementById('modalAviso').classList.remove('hidden');
+        }
+
+        function cerrarAviso() {
+            document.getElementById('modalAviso').classList.add('hidden');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/&/g, "&amp;")
+                       .replace(/</g, "&lt;")
+                       .replace(/>/g, "&gt;")
+                       .replace(/"/g, "&quot;")
+                       .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
