@@ -390,13 +390,13 @@
     <script>
         // ================= CONFIGURACIÓN SUPABASE =================
         const SUPABASE_URL = 'https://qttycfvwtdlhgdxwjbiq.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_gqN4850qm5PcY95d2zbZMQ_SvHeGxTE';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0dHljZnZ3dGRsaGdkeHdqYmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNTkwMjgsImV4cCI6MjEwNzgzNTAyOH0.ExyeNOGvIhMRm9IN6nVgMeEnxhOT4NMFpdgY4s-Qyjk';
 
         let supabaseClient = null;
-        try {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } catch(e) {
-            console.error("Error al iniciar Supabase:", e);
+        if (window.supabase && window.supabase.createClient) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+            console.error("No se pudo cargar la librería de Supabase CDN");
         }
 
         // ESTADO GLOBAL
