@@ -390,13 +390,20 @@
     <script>
         // ================= CONFIGURACIÓN SUPABASE =================
         const SUPABASE_URL = 'https://qttycfvwtdlhgdxwjbiq.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0dHljZnZ3dGRsaGdkeHdqYmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNTkwMjgsImV4cCI6MjEwNzgzNTAyOH0.ExyeNOGvIhMRm9IN6nVgMeEnxhOT4NMFpdgY4s-Qyjk';
+        const SUPABASE_ANON_KEY = 'sb_publishable_gqN4858qn5Pcy95d2zbZMQ_SvHeGxTE';
 
         let supabaseClient = null;
-        if (window.supabase && window.supabase.createClient) {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } else {
-            console.error("No se pudo cargar la librería de Supabase CDN");
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch(e) {
+            console.error("Error al iniciar Supabase:", e);
+        }
+
+        // GENERAR UN ID ÚNICO POR DISPOSITIVO (SEPARA LOS VOTOS ENTRE CELULARES Y LAPTOP)
+        let miVotanteId = localStorage.getItem('votante_id_halloween2026');
+        if (!miVotanteId) {
+            miVotanteId = 'user_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+            localStorage.setItem('votante_id_halloween2026', miVotanteId);
         }
 
         // ESTADO GLOBAL
@@ -700,63 +707,43 @@
             if (main) main.src = url;
         }
 
-        // EMITIR VOTOS EN SUPABASE
+        // EMITIR VOTOS EN SUPABASE (INDEPENDIENTE POR DISPOSITIVO)
         async function votar(idParticipante, categoria) {
             if (estaHoraVencida(horarios.limiteVotacion)) {
                 mostrarAviso('🛑 Las votaciones han sido cerradas.');
                 return;
             }
 
+            const pActual = participantes.find(p => p.id === idParticipante);
+            if (!pActual) return;
+
             if (misVotos[categoria] === idParticipante) {
-                mostrarAviso('✨ Ya le diste tu voto en esta categoría.');
+                mostrarAviso('✨ Ya le diste tu voto a este concursante en esta categoría.');
                 return;
             }
 
-            const actual = participantes.find(p => p.id === idParticipante);
-            if (!actual) return;
-
-            let nuevoCreativo = actual.votos.creativo;
-            let nuevoTerror = actual.votos.terror;
-            let nuevoActitud = actual.votos.actitud;
-
             if (misVotos[categoria]) {
-                const anterior = participantes.find(p => p.id === misVotos[categoria]);
-                if (anterior) {
-                    let antCreativo = anterior.votos.creativo;
-                    let antTerror = anterior.votos.terror;
-                    let antActitud = anterior.votos.actitud;
-
-                    if (categoria === 'creativo' && antCreativo > 0) antCreativo--;
-                    if (categoria === 'terror' && antTerror > 0) antTerror--;
-                    if (categoria === 'actitud' && antActitud > 0) antActitud--;
-
+                const pAnterior = participantes.find(p => p.id === misVotos[categoria]);
+                if (pAnterior) {
+                    let cant = pAnterior.votos[categoria] > 0 ? pAnterior.votos[categoria] - 1 : 0;
+                    let campoSQL = 'votos_' + categoria;
                     if (supabaseClient) {
-                        await supabaseClient.from('participantes').update({
-                            votos_creativo: antCreativo,
-                            votos_terror: antTerror,
-                            votos_actitud: antActitud
-                        }).eq('id', anterior.id);
+                        await supabaseClient.from('participantes').update({ [campoSQL]: cant }).eq('id', pAnterior.id);
                     }
                 }
             }
 
-            if (categoria === 'creativo') nuevoCreativo++;
-            if (categoria === 'terror') nuevoTerror++;
-            if (categoria === 'actitud') nuevoActitud++;
+            let nuevoTotal = (pActual.votos[categoria] || 0) + 1;
+            let campoSQL = 'votos_' + categoria;
 
             if (supabaseClient) {
-                const { error } = await supabaseClient.from('participantes').update({
-                    votos_creativo: nuevoCreativo,
-                    votos_terror: nuevoTerror,
-                    votos_actitud: nuevoActitud
-                }).eq('id', idParticipante);
-
+                const { error } = await supabaseClient.from('participantes').update({ [campoSQL]: nuevoTotal }).eq('id', idParticipante);
                 if (!error) {
                     misVotos[categoria] = idParticipante;
                     localStorage.setItem('misVotos_halloween2026', JSON.stringify(misVotos));
                     await cargarDatosSupabase();
                     renderizarGaleria();
-                    mostrarAviso('🎉 ¡Tu voto ha sido registrado!');
+                    mostrarAviso('🎉 ¡Voto registrado desde este dispositivo!');
                 }
             }
         }
