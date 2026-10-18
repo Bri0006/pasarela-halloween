@@ -24,7 +24,7 @@
             overflow-x: hidden;
         }
 
-        /* Animación Emojis Flotantes Ultra Ligeros */
+        /* Animación Emojis Flotantes */
         @keyframes floatEffect {
             0% { transform: translateY(100vh) rotate(0deg); opacity: 0.6; }
             50% { opacity: 0.2; }
@@ -90,7 +90,7 @@
             z-index: 10;
         }
 
-        /* AISLAMIENTO DE IMPRESIÓN (SOLO IMPRIME EL COLLAGE LIMPIO) */
+        /* AISLAMIENTO DE IMPRESIÓN */
         @media print {
             body {
                 background: white !important;
@@ -175,19 +175,26 @@
         <section id="secHome" class="space-y-8 my-auto pt-4">
             <div class="text-center space-y-3">
                 <h2 class="text-3xl sm:text-5xl font-black text-neon-orange font-creepster tracking-wider">¡BIENVENIDOS FAMILIA! 🧙‍♀️</h2>
-                <p class="text-lg sm:text-2xl text-purple-200">Elige quién eres presionando una de las siguientes opciones gigantes:</p>
+                <p class="text-lg sm:text-2xl text-purple-200">Elige quién eres presionando una de las siguientes opciones:</p>
+            </div>
+
+            <!-- BOTÓN ESPECIAL DE GANADORES (Aparece solo cuando finaliza la votación) -->
+            <div id="contenedorBotonGanadores" class="hidden text-center">
+                <button onclick="abrirModalGanadores()" class="btn-giant w-full max-w-3xl py-6 bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-black text-2xl sm:text-3xl rounded-3xl border-4 border-white shadow-2xl uppercase tracking-wider animate-bounce">
+                    🏆 ¡VER GANADORES POR CATEGORÍA! 🏆
+                </button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                 
-                <!-- Opción 1: JURADO (ENTRADA DIRECTA) -->
+                <!-- Opción 1: JURADO / VOTAR -->
                 <div class="bg-spooky-card rounded-3xl p-6 text-center space-y-6 flex flex-col justify-between shadow-2xl hover:scale-105 transition-transform duration-300">
                     <div class="space-y-3">
                         <div class="text-6xl my-2">👑</div>
-                        <h3 class="text-3xl font-bold text-neon-orange">JURADO / VOTAR</h3>
-                        <p class="text-base text-purple-200">¡Mira los disfraces de la familia y vota por tus favoritos libremente sin claves!</p>
+                        <h3 id="tituloCardVotar" class="text-3xl font-bold text-neon-orange">JURADO / VOTAR</h3>
+                        <p id="descCardVotar" class="text-base text-purple-200">¡Mira los disfraces de la familia y vota por tus favoritos libremente sin claves!</p>
                     </div>
-                    <button onclick="entrarJuradoDirecto()" class="btn-giant w-full py-5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-black font-black text-2xl rounded-2xl border-2 border-amber-300 shadow-xl uppercase tracking-wider">
+                    <button id="btnAccionVotar" onclick="entrarJuradoDirecto()" class="btn-giant w-full py-5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-black font-black text-2xl rounded-2xl border-2 border-amber-300 shadow-xl uppercase tracking-wider">
                         🗳️ VOTAR AHORA
                     </button>
                 </div>
@@ -196,10 +203,10 @@
                 <div class="bg-spooky-card rounded-3xl p-6 text-center space-y-6 flex flex-col justify-between shadow-2xl hover:scale-105 transition-transform duration-300">
                     <div class="space-y-3">
                         <div class="text-6xl my-2">📸</div>
-                        <h3 class="text-3xl font-bold text-neon-green">SOY PARTICIPANTE</h3>
-                        <p class="text-base text-purple-200">Sube hasta 3 fotos y 1 video corto luciendo tu disfraz de Halloween.</p>
+                        <h3 id="tituloCardSubir" class="text-3xl font-bold text-neon-green">SOY PARTICIPANTE</h3>
+                        <p id="descCardSubir" class="text-base text-purple-200">Sube hasta 3 fotos y 1 video corto luciendo tu disfraz de Halloween.</p>
                     </div>
-                    <button onclick="solicitarPin('participante')" class="btn-giant w-full py-5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-black font-black text-2xl rounded-2xl border-2 border-green-300 shadow-xl uppercase tracking-wider">
+                    <button id="btnAccionSubir" onclick="solicitarPin('participante')" class="btn-giant w-full py-5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-black font-black text-2xl rounded-2xl border-2 border-green-300 shadow-xl uppercase tracking-wider">
                         ✨ SUBIR DISFRAZ
                     </button>
                 </div>
@@ -230,7 +237,7 @@
         <section id="secJurado" class="hidden space-y-8">
             <div class="bg-purple-900/40 p-6 rounded-3xl border-2 border-orange-500 text-center space-y-2">
                 <h2 class="text-3xl sm:text-4xl font-black text-neon-orange">🗳️ Galería de Concursantes</h2>
-                <p class="text-lg sm:text-xl text-purple-200">¡Toca los botones de cada participante para darle tu voto!</p>
+                <p id="subTextoGaleria" class="text-lg sm:text-xl text-purple-200">¡Toca los botones de cada participante para darle tu voto!</p>
             </div>
 
             <div id="galeriaContenedor" class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -385,6 +392,38 @@
         🎃 Pasarela Halloween 2026 • Creado para la Familia 👻
     </footer>
 
+    <!-- MODAL DE GANADORES -->
+    <div id="modalGanadores" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 hidden overflow-y-auto">
+        <div class="bg-purple-950 border-4 border-yellow-500 rounded-3xl p-6 sm:p-8 max-w-3xl w-full space-y-6 shadow-2xl my-auto text-center">
+            <div class="flex justify-between items-center border-b border-purple-800 pb-4">
+                <h3 class="text-2xl sm:text-3xl font-black text-yellow-400 font-creepster">🏆 GANADORES DE LA PASARELA 🏆</h3>
+                <button onclick="cerrarModalGanadores()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-sm">✕ Cerrar</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                <div class="bg-spooky-card p-5 rounded-3xl border-2 border-yellow-500 space-y-3">
+                    <span class="text-5xl">🎨</span>
+                    <h4 class="text-lg font-bold text-yellow-400">MÁS CREATIVO</h4>
+                    <div id="ganadorCreativo" class="text-xl font-black text-white">Calculando...</div>
+                </div>
+
+                <div class="bg-spooky-card p-5 rounded-3xl border-2 border-red-500 space-y-3">
+                    <span class="text-5xl">👻</span>
+                    <h4 class="text-lg font-bold text-red-400">MÁS TERRORÍFICO</h4>
+                    <div id="ganadorTerror" class="text-xl font-black text-white">Calculando...</div>
+                </div>
+
+                <div class="bg-spooky-card p-5 rounded-3xl border-2 border-emerald-500 space-y-3">
+                    <span class="text-5xl">🎭</span>
+                    <h4 class="text-lg font-bold text-emerald-400">MEJOR ACTITUD</h4>
+                    <div id="ganadorActitud" class="text-xl font-black text-white">Calculando...</div>
+                </div>
+            </div>
+
+            <p class="text-sm text-purple-300 italic pt-2">¡Gracias a todos por participar y votar con tanta emoción! 🎃✨</p>
+        </div>
+    </div>
+
     <!-- MODAL DE PÓSTER / COLLAGE ARTÍSTICO SCRAPBOOK -->
     <div id="modalPoster" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 hidden overflow-y-auto">
         <div class="bg-purple-950 border-4 border-orange-500 rounded-3xl p-4 sm:p-8 max-w-5xl w-full space-y-6 shadow-2xl my-auto">
@@ -405,7 +444,7 @@
                     <p class="text-sm sm:text-lg text-green-300 font-bold tracking-wider">🦇 Recuerdos inolvidables de nuestra pasarela familiar 🕷️</p>
                 </div>
 
-                <!-- Grilla Estilo Scrapbook (Fotos desordenadas pero limpias) -->
+                <!-- Grilla Estilo Scrapbook -->
                 <div id="posterGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 py-8 relative z-25 items-center justify-items-center">
                     <!-- Generado dinámicamente -->
                 </div>
@@ -471,14 +510,12 @@
             console.error("Error al iniciar Supabase:", e);
         }
 
-        // GENERAR UN ID ÚNICO POR DISPOSITIVO
         let miVotanteId = localStorage.getItem('votante_id_halloween2026');
         if (!miVotanteId) {
             miVotanteId = 'user_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
             localStorage.setItem('votante_id_halloween2026', miVotanteId);
         }
 
-        // ESTADO GLOBAL
         let participantes = [];
         let misVotos = JSON.parse(localStorage.getItem('misVotos_halloween2026')) || { creativo: null, terror: null, actitud: null };
         let horarios = { limiteInscripcion: '', limiteVotacion: '' };
@@ -487,11 +524,10 @@
 
         window.onload = function() {
             crearEfectoFlotante();
-            cargarDatosSupabase(); // Iniciar descarga de datos de fondo inmediatamente
+            cargarDatosSupabase();
             configurarRealtime();
         };
 
-        // CARGAR DATOS DESDE SUPABASE RÁPIDO
         async function cargarDatosSupabase() {
             if (!supabaseClient || cargandoDatos) return;
             cargandoDatos = true;
@@ -522,7 +558,6 @@
                 }
                 verificarHorariosBanners();
 
-                // Si la galería de jurado está abierta, refrescar de inmediato
                 if (!document.getElementById('secJurado').classList.contains('hidden')) {
                     renderizarGaleria();
                 }
@@ -533,22 +568,15 @@
             }
         }
 
-        // TIEMPO REAL (REALTIME) CON SUPABASE
         function configurarRealtime() {
             if (!supabaseClient) return;
-            
             supabaseClient
                 .channel('cambios-pasarela')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'participantes' }, payload => {
-                    cargarDatosSupabase();
-                })
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracion' }, payload => {
-                    cargarDatosSupabase();
-                })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'participantes' }, payload => { cargarDatosSupabase(); })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracion' }, payload => { cargarDatosSupabase(); })
                 .subscribe();
         }
 
-        // GENERAR EMOJIS ANIMADOS DE FONDO
         function crearEfectoFlotante() {
             const contenedor = document.getElementById('spookyBackground');
             contenedor.innerHTML = '';
@@ -564,7 +592,6 @@
             }
         }
 
-        // NAVEGACIÓN Y PANTALLAS
         function ocultarSecciones() {
             document.getElementById('secHome').classList.add('hidden');
             document.getElementById('secJurado').classList.add('hidden');
@@ -586,12 +613,9 @@
             ocultarSecciones();
             document.getElementById('secJurado').classList.remove('hidden');
             renderizarGaleria();
-            if (participantes.length === 0) {
-                cargarDatosSupabase();
-            }
+            if (participantes.length === 0) cargarDatosSupabase();
         }
 
-        // CONTROL DE HORARIOS
         async function guardarLimite(tipo) {
             const val = tipo === 'inscripcion' ? document.getElementById('limiteInscripcion').value : document.getElementById('limiteVotacion').value;
             const keyName = tipo === 'inscripcion' ? 'limiteInscripcion' : 'limiteVotacion';
@@ -616,29 +640,63 @@
         function verificarHorariosBanners() {
             const banner = document.getElementById('bannerEstado');
             let msjs = [];
+            let inscripcionTerminada = horarios.limiteInscripcion && estaHoraVencida(horarios.limiteInscripcion);
+            let votacionTerminada = horarios.limiteVotacion && estaHoraVencida(horarios.limiteVotacion);
 
-            if (horarios.limiteInscripcion) {
-                if (estaHoraVencida(horarios.limiteInscripcion)) {
-                    msjs.push('🔒 Inscripciones cerradas (' + horarios.limiteInscripcion + ')');
-                } else {
-                    msjs.push('⏳ Límite subida: ' + horarios.limiteInscripcion);
-                }
+            // Control de tarjeta Subir Disfraz
+            const btnSubir = document.getElementById('btnAccionSubir');
+            const descSubir = document.getElementById('descCardSubir');
+            if (inscripcionTerminada) {
+                btnSubir.innerText = '🔒 INSCRIPCIONES CERRADAS';
+                btnSubir.className = 'btn-giant w-full py-5 bg-gray-700 text-gray-400 font-black text-xl rounded-2xl cursor-not-allowed';
+                btnSubir.onclick = () => mostrarAviso('🔒 El tiempo para subir disfraces ya finalizó.');
+                descSubir.innerText = 'El plazo de inscripción ha concluido.';
+                msjs.push('🔒 Inscripciones cerradas');
+            } else {
+                btnSubir.innerText = '✨ SUBIR DISFRAZ';
+                btnSubir.className = 'btn-giant w-full py-5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-black font-black text-2xl rounded-2xl border-2 border-green-300 shadow-xl uppercase tracking-wider';
+                btnSubir.onclick = () => solicitarPin('participante');
+                descSubir.innerText = 'Sube hasta 3 fotos y 1 video corto luciendo tu disfraz de Halloween.';
+                if (horarios.limiteInscripcion) msjs.push('⏳ Límite subida: ' + horarios.limiteInscripcion);
             }
 
-            if (horarios.limiteVotacion) {
-                if (estaHoraVencida(horarios.limiteVotacion)) {
-                    msjs.push('🛑 Votaciones cerradas (' + horarios.limiteVotacion + ')');
-                } else {
-                    msjs.push('⏳ Límite votos: ' + horarios.limiteVotacion);
-                }
+            // Control de tarjeta Votar y Botón de Ganadores
+            const contenedorGanadores = document.getElementById('contenedorBotonGanadores');
+            const btnVotar = document.getElementById('btnAccionVotar');
+            const descVotar = document.getElementById('descCardVotar');
+
+            if (votacionTerminada) {
+                contenedorGanadores.classList.remove('hidden');
+                btnVotar.innerText = '🗳️ VOTACIONES CERRADAS';
+                btnVotar.className = 'btn-giant w-full py-5 bg-gray-700 text-gray-400 font-black text-xl rounded-2xl cursor-not-allowed';
+                btnVotar.onclick = () => mostrarAviso('🛑 Las votaciones han finalizado. ¡Mira los ganadores arriba!');
+                descVotar.innerText = 'El tiempo de votación ha concluido. ¡Ya hay resultados oficiales!';
+                msjs.push('🛑 Votaciones cerradas (' + horarios.limiteVotacion + ')');
+            } else {
+                contenedorGanadores.classList.add('hidden');
+                btnVotar.innerText = '🗳️ VOTAR AHORA';
+                btnVotar.className = 'btn-giant w-full py-5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-black font-black text-2xl rounded-2xl border-2 border-amber-300 shadow-xl uppercase tracking-wider';
+                btnVotar.onclick = () => entrarJuradoDirecto();
+                descVotar.innerText = '¡Mira los disfraces de la familia y vota por tus favoritos libremente sin claves!';
+                if (horarios.limiteVotacion) msjs.push('⏳ Límite votos: ' + horarios.limiteVotacion);
             }
 
             banner.innerHTML = msjs.length > 0 ? msjs.join(' • ') : '🎃 ¡La Pasarela de la Pijamada está en vivo y activa!';
         }
 
-        // PINS DE SEGURIDAD
+        function abrirModalGanadores() {
+            document.getElementById('ganadorCreativo').innerHTML = calcularGanadoresCategoriaHtml('creativo');
+            document.getElementById('ganadorTerror').innerHTML = calcularGanadoresCategoriaHtml('terror');
+            document.getElementById('ganadorActitud').innerHTML = calcularGanadoresCategoriaHtml('actitud');
+            document.getElementById('modalGanadores').classList.remove('hidden');
+        }
+
+        function cerrarModalGanadores() {
+            document.getElementById('modalGanadores').classList.add('hidden');
+        }
+
         function solicitarPin(tipo) {
-            if (tipo === 'participante' && estaHoraVencida(horarios.limiteInscripcion)) {
+            if (tipo === 'participante' && horarios.limiteInscripcion && estaHoraVencida(horarios.limiteInscripcion)) {
                 mostrarAviso('🔒 Lo sentimos, el tiempo para subir participantes ya finalizó por hoy.');
                 return;
             }
@@ -675,17 +733,20 @@
             }
         }
 
-        // DIBUJAR GALERÍA DEL JURADO
         function renderizarGaleria() {
             const cont = document.getElementById('galeriaContenedor');
             cont.innerHTML = '';
+
+            let votacionTerminada = horarios.limiteVotacion && estaHoraVencida(horarios.limiteVotacion);
+            if (votacionTerminada) {
+                document.getElementById('subTextoGaleria').innerText = '🛑 Las votaciones han terminado. ¡Estos son los resultados finales!';
+            }
 
             if (participantes.length === 0) {
                 cont.innerHTML = `
                     <div class="col-span-full text-center py-12 space-y-4">
                         <span class="text-7xl animate-pulse">👻</span>
                         <h3 class="text-3xl font-bold text-orange-400">Cargando concursantes...</h3>
-                        <p class="text-xl text-purple-200">Si tardan en salir, presiona el botón "Menú" y vuelve a entrar a Votar.</p>
                     </div>`;
                 return;
             }
@@ -785,9 +846,8 @@
             if (main) main.src = url;
         }
 
-        // EMITIR VOTOS ULTRA RÁPIDOS EN 0 SEGUNDOS (SINCRO SILENCIOSA)
         function votar(idParticipante, categoria) {
-            if (estaHoraVencida(horarios.limiteVotacion)) {
+            if (horarios.limiteVotacion && estaHoraVencida(horarios.limiteVotacion)) {
                 mostrarAviso('🛑 Las votaciones han sido cerradas.');
                 return;
             }
@@ -800,7 +860,6 @@
                 return;
             }
 
-            // Descontar voto anterior localmente de inmediato
             if (misVotos[categoria]) {
                 const pAnterior = participantes.find(p => p.id === misVotos[categoria]);
                 if (pAnterior) {
@@ -811,21 +870,17 @@
                 }
             }
 
-            // Incrementar nuevo voto localmente de inmediato
             pActual.votos[categoria] = (pActual.votos[categoria] || 0) + 1;
             misVotos[categoria] = idParticipante;
             localStorage.setItem('misVotos_halloween2026', JSON.stringify(misVotos));
 
-            // Refrescar UI instantáneamente
             renderizarGaleria();
 
-            // Guardar en Supabase sin congelar la app
             if (supabaseClient) {
                 supabaseClient.from('participantes').update({ ['votos_' + categoria]: pActual.votos[categoria] }).eq('id', idParticipante).then();
             }
         }
 
-        // AGREGAR COMENTARIO
         function agregarComentario(id) {
             const input = document.getElementById(`com_${id}`);
             const texto = input.value.trim();
@@ -843,7 +898,6 @@
             }
         }
 
-        // COMPRESIÓN DE IMAGEN CON CANVAS
         function comprimirImagen(file, maxWidth = 800, quality = 0.7) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -874,7 +928,6 @@
             });
         }
 
-        // LECTURA DE VIDEO
         function leerVideoMobile(file, maxMB = 6) {
             return new Promise((resolve, reject) => {
                 if (file.size > maxMB * 1024 * 1024) {
@@ -888,11 +941,10 @@
             });
         }
 
-        // GUARDAR PARTICIPANTE Y REDIRIGIR AL INICIO
         async function guardarParticipante(e) {
             e.preventDefault();
 
-            if (estaHoraVencida(horarios.limiteInscripcion)) {
+            if (horarios.limiteInscripcion && estaHoraVencida(horarios.limiteInscripcion)) {
                 mostrarAviso('🔒 El tiempo para inscribir disfraces ya terminó.');
                 return;
             }
@@ -962,8 +1014,7 @@
             }
         }
 
-        // CÁLCULO DEL PODIO
-        function calcularGanadoresCategoria(categoria) {
+        function calcularGanadoresCategoriaHtml(categoria) {
             let maxVotos = -1;
             participantes.forEach(p => {
                 const v = p.votos[categoria] || 0;
@@ -975,14 +1026,13 @@
             const ganadores = participantes.filter(p => (p.votos[categoria] || 0) === maxVotos);
 
             if (ganadores.length === 1) {
-                return `${ganadores[0].nombre}<br><span class="text-sm opacity-80">${maxVotos} Votos</span>`;
+                return `${escapeHtml(ganadores[0].nombre)}<br><span class="text-sm text-yellow-300 font-normal">${maxVotos} Votos</span>`;
             } else {
-                const nombres = ganadores.map(g => g.nombre).join(' y ');
-                return `🤝 Empate:<br><b>${nombres}</b><br><span class="text-sm opacity-80">${maxVotos} Votos c/u</span>`;
+                const nombres = ganadores.map(g => escapeHtml(g.nombre)).join(' y ');
+                return `🤝 Empate:<br><b>${nombres}</b><br><span class="text-sm text-yellow-300 font-normal">${maxVotos} Votos c/u</span>`;
             }
         }
 
-        // PANEL ADMIN
         function actualizarAdminPanel() {
             document.getElementById('statParticipantes').innerText = participantes.length;
 
@@ -998,9 +1048,9 @@
             document.getElementById('statVotos').innerText = totalVotos;
             document.getElementById('statComentarios').innerText = totalComentarios;
 
-            document.getElementById('podioCreativo').innerHTML = calcularGanadoresCategoria('creativo');
-            document.getElementById('podioTerror').innerHTML = calcularGanadoresCategoria('terror');
-            document.getElementById('podioActitud').innerHTML = calcularGanadoresCategoria('actitud');
+            document.getElementById('podioCreativo').innerHTML = calcularGanadoresCategoriaHtml('creativo');
+            document.getElementById('podioTerror').innerHTML = calcularGanadoresCategoriaHtml('terror');
+            document.getElementById('podioActitud').innerHTML = calcularGanadoresCategoriaHtml('actitud');
 
             renderizarModeracionAdmin();
         }
@@ -1097,7 +1147,6 @@
             }
         }
 
-        // PÓSTER / COLLAGE ARTÍSTICO SCRAPBOOK
         function abrirPoster() {
             const grid = document.getElementById('posterGrid');
             grid.innerHTML = '';
@@ -1106,7 +1155,6 @@
                 grid.innerHTML = '<p class="col-span-full text-purple-200 py-12 text-lg italic">Aún no hay fotos en la pasarela para generar el collage.</p>';
             } else {
                 const rotaciones = ['rotate-1', '-rotate-2', 'rotate-3', '-rotate-1', 'rotate-2', '-rotate-3'];
-                
                 let contador = 0;
                 participantes.forEach(p => {
                     if (p.fotos && p.fotos.length > 0) {
@@ -1137,7 +1185,6 @@
             document.getElementById('modalPoster').classList.add('hidden');
         }
 
-        // UTILIDADES Y MODALES
         function mostrarAviso(msg) {
             document.getElementById('avisoTexto').innerText = msg;
             document.getElementById('modalAviso').classList.remove('hidden');
