@@ -392,31 +392,37 @@
         🎃 Pasarela Halloween 2026 • Creado para la Familia 👻
     </footer>
 
-    <!-- MODAL DE GANADORES -->
+    <!-- MODAL DE GANADORES CON FOTOS, VIDEOS E INFO COMPLETA -->
     <div id="modalGanadores" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 hidden overflow-y-auto">
-        <div class="bg-purple-950 border-4 border-yellow-500 rounded-3xl p-6 sm:p-8 max-w-3xl w-full space-y-6 shadow-2xl my-auto text-center">
+        <div class="bg-purple-950 border-4 border-yellow-500 rounded-3xl p-6 sm:p-8 max-w-4xl w-full space-y-6 shadow-2xl my-auto text-center">
             <div class="flex justify-between items-center border-b border-purple-800 pb-4">
-                <h3 class="text-2xl sm:text-3xl font-black text-yellow-400 font-creepster">🏆 GANADORES DE LA PASARELA 🏆</h3>
+                <h3 class="text-2xl sm:text-3xl font-black text-yellow-400 font-creepster">🏆 GANADORES OFICIALES DE LA PASARELA 🏆</h3>
                 <button onclick="cerrarModalGanadores()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-sm">✕ Cerrar</button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-                <div class="bg-spooky-card p-5 rounded-3xl border-2 border-yellow-500 space-y-3">
-                    <span class="text-5xl">🎨</span>
-                    <h4 class="text-lg font-bold text-yellow-400">MÁS CREATIVO</h4>
-                    <div id="ganadorCreativo" class="text-xl font-black text-white">Calculando...</div>
+                <div class="bg-spooky-card p-5 rounded-3xl border-2 border-yellow-500 space-y-3 flex flex-col justify-between">
+                    <div>
+                        <span class="text-4xl">🎨</span>
+                        <h4 class="text-lg font-bold text-yellow-400 mb-3">MÁS CREATIVO</h4>
+                    </div>
+                    <div id="ganadorCreativoDetalle" class="space-y-3">Cargando...</div>
                 </div>
 
-                <div class="bg-spooky-card p-5 rounded-3xl border-2 border-red-500 space-y-3">
-                    <span class="text-5xl">👻</span>
-                    <h4 class="text-lg font-bold text-red-400">MÁS TERRORÍFICO</h4>
-                    <div id="ganadorTerror" class="text-xl font-black text-white">Calculando...</div>
+                <div class="bg-spooky-card p-5 rounded-3xl border-2 border-red-500 space-y-3 flex flex-col justify-between">
+                    <div>
+                        <span class="text-4xl">👻</span>
+                        <h4 class="text-lg font-bold text-red-400 mb-3">MÁS TERRORÍFICO</h4>
+                    </div>
+                    <div id="ganadorTerrorDetalle" class="space-y-3">Cargando...</div>
                 </div>
 
-                <div class="bg-spooky-card p-5 rounded-3xl border-2 border-emerald-500 space-y-3">
-                    <span class="text-5xl">🎭</span>
-                    <h4 class="text-lg font-bold text-emerald-400">MEJOR ACTITUD</h4>
-                    <div id="ganadorActitud" class="text-xl font-black text-white">Calculando...</div>
+                <div class="bg-spooky-card p-5 rounded-3xl border-2 border-emerald-500 space-y-3 flex flex-col justify-between">
+                    <div>
+                        <span class="text-4xl">🎭</span>
+                        <h4 class="text-lg font-bold text-emerald-400 mb-3">MEJOR ACTITUD</h4>
+                    </div>
+                    <div id="ganadorActitudDetalle" class="space-y-3">Cargando...</div>
                 </div>
             </div>
 
@@ -643,14 +649,13 @@
             let inscripcionTerminada = horarios.limiteInscripcion && estaHoraVencida(horarios.limiteInscripcion);
             let votacionTerminada = horarios.limiteVotacion && estaHoraVencida(horarios.limiteVotacion);
 
-            // Control de tarjeta Subir Disfraz
             const btnSubir = document.getElementById('btnAccionSubir');
             const descSubir = document.getElementById('descCardSubir');
             if (inscripcionTerminada) {
                 btnSubir.innerText = '🔒 INSCRIPCIONES CERRADAS';
                 btnSubir.className = 'btn-giant w-full py-5 bg-gray-700 text-gray-400 font-black text-xl rounded-2xl cursor-not-allowed';
-                btnSubir.onclick = () => mostrarAviso('🔒 El tiempo para subir disfraces ya finalizó.');
-                descSubir.innerText = 'El plazo de inscripción ha concluido.';
+                btnSubir.onclick = () => mostrarAviso('🔒 El plazo para subir disfraces ha concluido.');
+                descSubir.innerText = 'Inscripciones finalizadas.';
                 msjs.push('🔒 Inscripciones cerradas');
             } else {
                 btnSubir.innerText = '✨ SUBIR DISFRAZ';
@@ -660,7 +665,6 @@
                 if (horarios.limiteInscripcion) msjs.push('⏳ Límite subida: ' + horarios.limiteInscripcion);
             }
 
-            // Control de tarjeta Votar y Botón de Ganadores
             const contenedorGanadores = document.getElementById('contenedorBotonGanadores');
             const btnVotar = document.getElementById('btnAccionVotar');
             const descVotar = document.getElementById('descCardVotar');
@@ -670,7 +674,7 @@
                 btnVotar.innerText = '🗳️ VOTACIONES CERRADAS';
                 btnVotar.className = 'btn-giant w-full py-5 bg-gray-700 text-gray-400 font-black text-xl rounded-2xl cursor-not-allowed';
                 btnVotar.onclick = () => mostrarAviso('🛑 Las votaciones han finalizado. ¡Mira los ganadores arriba!');
-                descVotar.innerText = 'El tiempo de votación ha concluido. ¡Ya hay resultados oficiales!';
+                descVotar.innerText = 'Las votaciones concluyeron. ¡Resultados oficiales listos!';
                 msjs.push('🛑 Votaciones cerradas (' + horarios.limiteVotacion + ')');
             } else {
                 contenedorGanadores.classList.add('hidden');
@@ -684,15 +688,47 @@
             banner.innerHTML = msjs.length > 0 ? msjs.join(' • ') : '🎃 ¡La Pasarela de la Pijamada está en vivo y activa!';
         }
 
+        // MOSTRAR DETALLE COMPLETO DE GANADORES (FOTOS, VIDEOS, NOMBRE Y PERSONAJE)
         function abrirModalGanadores() {
-            document.getElementById('ganadorCreativo').innerHTML = calcularGanadoresCategoriaHtml('creativo');
-            document.getElementById('ganadorTerror').innerHTML = calcularGanadoresCategoriaHtml('terror');
-            document.getElementById('ganadorActitud').innerHTML = calcularGanadoresCategoriaHtml('actitud');
+            document.getElementById('ganadorCreativoDetalle').innerHTML = renderizarDetalleGanador('creativo');
+            document.getElementById('ganadorTerrorDetalle').innerHTML = renderizarDetalleGanador('terror');
+            document.getElementById('ganadorActitudDetalle').innerHTML = renderizarDetalleGanador('actitud');
             document.getElementById('modalGanadores').classList.remove('hidden');
         }
 
         function cerrarModalGanadores() {
             document.getElementById('modalGanadores').classList.add('hidden');
+        }
+
+        function renderizarDetalleGanador(categoria) {
+            let maxVotos = -1;
+            participantes.forEach(p => {
+                const v = p.votos[categoria] || 0;
+                if (v > maxVotos) maxVotos = v;
+            });
+
+            if (maxVotos <= 0) return '<p class="text-purple-300 italic">Sin votos registrados aún</p>';
+
+            const ganadores = participantes.filter(p => (p.votos[categoria] || 0) === maxVotos);
+
+            return ganadores.map(g => {
+                const fotoPrincipal = (g.fotos && g.fotos.length > 0) ? g.fotos[0] : 'https://placehold.co/400x300/2a0c2a/ff6600?text=Sin+Foto';
+                let videoTag = g.video ? `<video src="${g.video}" controls class="w-full h-28 object-cover rounded-xl border border-purple-500 mt-2"></video>` : '';
+
+                return `
+                    <div class="bg-purple-950/90 p-3 rounded-2xl border border-purple-700 space-y-2 text-center">
+                        <img src="${fotoPrincipal}" class="w-full h-36 object-cover rounded-xl border border-orange-500/60 shadow-md">
+                        ${videoTag}
+                        <div>
+                            <p class="font-black text-orange-400 text-lg">${escapeHtml(g.nombre)}</p>
+                            <p class="text-xs text-green-300 font-semibold">🧛‍♂️ ${escapeHtml(g.personaje)}</p>
+                        </div>
+                        <div class="inline-block bg-black/40 px-3 py-1 rounded-full text-xs font-bold text-yellow-300 border border-yellow-500/30">
+                            ⭐ ${maxVotos} Votos
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function solicitarPin(tipo) {
@@ -739,7 +775,7 @@
 
             let votacionTerminada = horarios.limiteVotacion && estaHoraVencida(horarios.limiteVotacion);
             if (votacionTerminada) {
-                document.getElementById('subTextoGaleria').innerText = '🛑 Las votaciones han terminado. ¡Estos son los resultados finales!';
+                document.getElementById('subTextoGaleria').innerText = '🛑 Las votaciones han terminado. ¡Estos son los resultados oficiales!';
             }
 
             if (participantes.length === 0) {
@@ -1014,17 +1050,14 @@
             }
         }
 
-        function calcularGanadoresCategoriaHtml(categoria) {
+        function calcularGanadoresCategoriaTexto(categoria) {
             let maxVotos = -1;
             participantes.forEach(p => {
                 const v = p.votos[categoria] || 0;
                 if (v > maxVotos) maxVotos = v;
             });
-
             if (maxVotos <= 0) return 'Sin votos aún';
-
             const ganadores = participantes.filter(p => (p.votos[categoria] || 0) === maxVotos);
-
             if (ganadores.length === 1) {
                 return `${escapeHtml(ganadores[0].nombre)}<br><span class="text-sm text-yellow-300 font-normal">${maxVotos} Votos</span>`;
             } else {
@@ -1048,9 +1081,9 @@
             document.getElementById('statVotos').innerText = totalVotos;
             document.getElementById('statComentarios').innerText = totalComentarios;
 
-            document.getElementById('podioCreativo').innerHTML = calcularGanadoresCategoriaHtml('creativo');
-            document.getElementById('podioTerror').innerHTML = calcularGanadoresCategoriaHtml('terror');
-            document.getElementById('podioActitud').innerHTML = calcularGanadoresCategoriaHtml('actitud');
+            document.getElementById('podioCreativo').innerHTML = calcularGanadoresCategoriaTexto('creativo');
+            document.getElementById('podioTerror').innerHTML = calcularGanadoresCategoriaTexto('terror');
+            document.getElementById('podioActitud').innerHTML = calcularGanadoresCategoriaTexto('actitud');
 
             renderizarModeracionAdmin();
         }
