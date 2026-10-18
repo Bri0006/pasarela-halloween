@@ -24,10 +24,10 @@
             overflow-x: hidden;
         }
 
-        /* Animación Emojis Flotantes */
+        /* Animación Emojis Flotantes (Optimizado) */
         @keyframes floatEffect {
             0% { transform: translateY(100vh) rotate(0deg); opacity: 0.8; }
-            50% { opacity: 0.4; }
+            50% { opacity: 0.3; }
             100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
 
@@ -36,6 +36,7 @@
             pointer-events: none;
             z-index: 0;
             animation: floatEffect linear infinite;
+            will-change: transform;
         }
 
         /* Efectos Neón */
@@ -50,7 +51,7 @@
         .bg-spooky-card {
             background: rgba(26, 12, 42, 0.92);
             border: 2px solid #5b21b6;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(4px);
         }
         .bg-spooky-card:hover {
             border-color: #ff6600;
@@ -65,7 +66,7 @@
             box-shadow: 0 2px 0px rgba(0,0,0,0.5);
         }
 
-        /* Estilos del Collage Scrapbook Artístico */
+        /* Estilos Scrapbook */
         .scrapbook-container {
             background: #1a0c2a;
             background-image: radial-gradient(#3b115a 1px, transparent 1px);
@@ -74,34 +75,58 @@
         }
         .polaroid-frame {
             background: #fff;
-            padding: 10px 10px 30px 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            transition: transform 0.3s ease;
-        }
-        .polaroid-frame:hover {
-            transform: scale(1.05) rotate(0deg) !important;
-            z-index: 50;
+            padding: 8px 8px 24px 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            transition: transform 0.2s ease;
         }
         .tape-effect {
             position: absolute;
-            top: -12px;
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 24px;
+            width: 70px;
+            height: 20px;
             background: rgba(255, 255, 255, 0.4);
-            border-left: 2px dashed rgba(0,0,0,0.2);
-            border-right: 2px dashed rgba(0,0,0,0.2);
+            border-left: 2px dashed rgba(0,0,0,0.15);
+            border-right: 2px dashed rgba(0,0,0,0.15);
             z-index: 10;
         }
 
-        /* Ocultar barra de desplazamiento manteniendo funcionalidad */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        /* Configuración de Impresión (Ajusta el Collage a 1 sola página) */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #modalPoster, #modalPoster * {
+                visibility: visible;
+            }
+            #modalPoster {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100% !important;
+                height: 100% !important;
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            #modalPoster button {
+                display: none !important;
+            }
+            #contenidoPoster {
+                border: none !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                background: #1a0c2a !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                page-break-inside: avoid;
+            }
+            @page {
+                size: landscape;
+                margin: 0.5cm;
+            }
         }
     </style>
 </head>
@@ -377,10 +402,10 @@
 
                 <!-- Grilla Estilo Scrapbook (Fotos desordenadas pero limpias) -->
                 <div id="posterGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 py-8 relative z-25 items-center justify-items-center">
-                    <!-- Generado dinámicamente con rotación estilo real -->
+                    <!-- Generado dinámicamente -->
                 </div>
 
-                <!-- Stickers y Frases decorativas flotantes en las esquinas -->
+                <!-- Stickers y Frases decorativas flotantes -->
                 <div class="absolute bottom-4 left-4 text-3xl opacity-70 pointer-events-none z-10">🍬🍫👻</div>
                 <div class="absolute top-4 right-4 text-3xl opacity-70 pointer-events-none z-10">🦇🕸️🎃</div>
 
@@ -441,7 +466,7 @@
             console.error("Error al iniciar Supabase:", e);
         }
 
-        // GENERAR UN ID ÚNICO POR DISPOSITIVO (SEPARA LOS VOTOS ENTRE CELULARES Y LAPTOP)
+        // GENERAR UN ID ÚNICO POR DISPOSITIVO
         let miVotanteId = localStorage.getItem('votante_id_halloween2026');
         if (!miVotanteId) {
             miVotanteId = 'user_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
@@ -516,17 +541,18 @@
                 .subscribe();
         }
 
-        // GENERAR EMOJIS ANIMADOS DE FONDO
+        // GENERAR EMOJIS ANIMADOS DE FONDO (LIGERO)
         function crearEfectoFlotante() {
             const contenedor = document.getElementById('spookyBackground');
-            const emojis = ['🎃', '👻', '🦇', '💀', '🕷️', '🍬', '🕸️'];
-            for (let i = 0; i < 22; i++) {
+            contenedor.innerHTML = '';
+            const emojis = ['🎃', '👻', '🦇', '💀', '🕷️'];
+            for (let i = 0; i < 8; i++) {
                 const el = document.createElement('div');
-                el.className = 'spooky-float text-3xl sm:text-4xl';
+                el.className = 'spooky-float text-2xl sm:text-3xl';
                 el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
                 el.style.left = `${Math.random() * 100}vw`;
-                el.style.animationDuration = `${6 + Math.random() * 8}s`;
-                el.style.animationDelay = `${Math.random() * 5}s`;
+                el.style.animationDuration = `${10 + Math.random() * 8}s`;
+                el.style.animationDelay = `${Math.random() * 4}s`;
                 contenedor.appendChild(el);
             }
         }
@@ -555,7 +581,7 @@
             renderizarGaleria();
         }
 
-        // CONTROL DE HORARIOS DE FIESTA
+        // CONTROL DE HORARIOS
         async function guardarLimite(tipo) {
             const val = tipo === 'inscripcion' ? document.getElementById('limiteInscripcion').value : document.getElementById('limiteVotacion').value;
             const keyName = tipo === 'inscripcion' ? 'limiteInscripcion' : 'limiteVotacion';
@@ -749,7 +775,7 @@
             if (main) main.src = url;
         }
 
-        // EMITIR VOTOS EN SUPABASE
+        // EMITIR VOTOS RÁPIDOS (INTERFAZ OPTIMISTA)
         async function votar(idParticipante, categoria) {
             if (estaHoraVencida(horarios.limiteVotacion)) {
                 mostrarAviso('🛑 Las votaciones han sido cerradas.');
@@ -764,33 +790,33 @@
                 return;
             }
 
+            // Descontar voto anterior si cambió de opción
             if (misVotos[categoria]) {
                 const pAnterior = participantes.find(p => p.id === misVotos[categoria]);
                 if (pAnterior) {
-                    let cant = pAnterior.votos[categoria] > 0 ? pAnterior.votos[categoria] - 1 : 0;
-                    let campoSQL = 'votos_' + categoria;
+                    pAnterior.votos[categoria] = Math.max(0, pAnterior.votos[categoria] - 1);
                     if (supabaseClient) {
-                        await supabaseClient.from('participantes').update({ [campoSQL]: cant }).eq('id', pAnterior.id);
+                        supabaseClient.from('participantes').update({ ['votos_' + categoria]: pAnterior.votos[categoria] }).eq('id', pAnterior.id);
                     }
                 }
             }
 
-            let nuevoTotal = (pActual.votos[categoria] || 0) + 1;
-            let campoSQL = 'votos_' + categoria;
+            // Actualizar voto actual
+            pActual.votos[categoria] = (pActual.votos[categoria] || 0) + 1;
+            misVotos[categoria] = idParticipante;
+            localStorage.setItem('misVotos_halloween2026', JSON.stringify(misVotos));
 
+            // Actualización visual inmediata
+            renderizarGaleria();
+            mostrarAviso('🎉 ¡Voto registrado!');
+
+            // Guardar en Supabase en segundo plano
             if (supabaseClient) {
-                const { error } = await supabaseClient.from('participantes').update({ [campoSQL]: nuevoTotal }).eq('id', idParticipante);
-                if (!error) {
-                    misVotos[categoria] = idParticipante;
-                    localStorage.setItem('misVotos_halloween2026', JSON.stringify(misVotos));
-                    await cargarDatosSupabase();
-                    renderizarGaleria();
-                    mostrarAviso('🎉 ¡Voto registrado!');
-                }
+                supabaseClient.from('participantes').update({ ['votos_' + categoria]: pActual.votos[categoria] }).eq('id', idParticipante);
             }
         }
 
-        // AGREGAR COMENTARIO EN SUPABASE
+        // AGREGAR COMENTARIO
         async function agregarComentario(id) {
             const input = document.getElementById(`com_${id}`);
             const texto = input.value.trim();
@@ -798,18 +824,13 @@
 
             const p = participantes.find(x => x.id === id);
             if (p) {
-                const nuevosComentarios = [...(p.comentarios || []), texto];
-                if (supabaseClient) {
-                    const { error } = await supabaseClient.from('participantes').update({
-                        comentarios: nuevosComentarios
-                    }).eq('id', id);
+                p.comentarios = [...(p.comentarios || []), texto];
+                input.value = '';
+                renderizarGaleria();
+                mostrarAviso('💬 ¡Comentario agregado!');
 
-                    if (!error) {
-                        input.value = '';
-                        await cargarDatosSupabase();
-                        renderizarGaleria();
-                        mostrarAviso('💬 ¡Comentario agregado!');
-                    }
+                if (supabaseClient) {
+                    supabaseClient.from('participantes').update({ comentarios: p.comentarios }).eq('id', id);
                 }
             }
         }
@@ -845,7 +866,7 @@
             });
         }
 
-        // LECTURA DE VIDEO LIGERA CON CONTROL DE TAMAÑO (MÁXIMO 6MB)
+        // LECTURA DE VIDEO LIGERA
         function leerVideoMobile(file, maxMB = 6) {
             return new Promise((resolve, reject) => {
                 if (file.size > maxMB * 1024 * 1024) {
@@ -859,7 +880,7 @@
             });
         }
 
-        // GUARDAR NUEVO PARTICIPANTE EN SUPABASE
+        // GUARDAR NUEVO PARTICIPANTE Y REDIRIGIR AL MENÚ PRINCIPAL
         async function guardarParticipante(e) {
             e.preventDefault();
 
@@ -928,12 +949,13 @@
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = '🚀 PUBLICAR EN LA PASARELA';
 
-                mostrarAviso('🎃 ¡Participante agregado con éxito!');
+                mostrarAviso('🎃 ¡Disfraz subido con éxito!');
                 await cargarDatosSupabase();
 
+                // Redireccionar al Menú Principal
                 setTimeout(() => {
-                    entrarJuradoDirecto();
-                }, 1200);
+                    irAHome();
+                }, 1000);
 
             } catch (err) {
                 console.error(err);
@@ -1118,25 +1140,23 @@
             if (participantes.length === 0) {
                 grid.innerHTML = '<p class="col-span-full text-purple-200 py-12 text-lg italic">Aún no hay fotos en la pasarela para generar el collage.</p>';
             } else {
-                // Rotaciones artísticas aleatorias estilo scrapbook
                 const rotaciones = ['rotate-1', '-rotate-2', 'rotate-3', '-rotate-1', 'rotate-2', '-rotate-3'];
                 
                 let contador = 0;
                 participantes.forEach(p => {
                     if (p.fotos && p.fotos.length > 0) {
-                        // Tomamos todas las fotos o la principal de cada participante
                         p.fotos.forEach((fotoUrl) => {
                             const rotacionClase = rotaciones[contador % rotaciones.length];
                             contador++;
 
                             const polaroid = document.createElement('div');
-                            polaroid.className = `polaroid-frame rounded-lg w-40 sm:w-48 relative ${rotacionClase} m-2`;
+                            polaroid.className = `polaroid-frame rounded-lg w-36 sm:w-44 relative ${rotacionClase} m-1 sm:m-2`;
                             polaroid.innerHTML = `
                                 <div class="tape-effect"></div>
-                                <img src="${fotoUrl}" class="w-full h-36 sm:h-40 object-cover rounded-sm border border-gray-200">
+                                <img src="${fotoUrl}" class="w-full h-32 sm:h-36 object-cover rounded-sm border border-gray-200">
                                 <div class="pt-2 text-center">
-                                    <p class="font-black text-gray-800 text-xs sm:text-sm truncate">${escapeHtml(p.nombre)}</p>
-                                    <p class="text-[10px] sm:text-xs text-purple-600 font-bold truncate">✨ ${escapeHtml(p.personaje)}</p>
+                                    <p class="font-black text-gray-800 text-xs truncate">${escapeHtml(p.nombre)}</p>
+                                    <p class="text-[10px] text-purple-600 font-bold truncate">✨ ${escapeHtml(p.personaje)}</p>
                                 </div>
                             `;
                             grid.appendChild(polaroid);
